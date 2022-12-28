@@ -1,6 +1,7 @@
 import React from 'react';
 import {useEffect, useState} from 'react'
 import './App.css'
+import moment from 'moment';
 
 function padTo2Digits(num: number) {
   return num.toString().padStart(2, '0');
@@ -143,15 +144,16 @@ const ResultRoutes = ({routes}) => {
   )
 }
 
+const today = moment().format('YYYY-MM-DD');
+
 function App() {
   const [routes, setRoutes] = useState<any>({
     straightRoutes: [],
     reversedRoutes: [],
   });
 
-  const date = '2022-12-28';
   useEffect(() => {
-    fetch('api/raspisanie?date=' + date)
+    fetch('api/raspisanie?date=' + today)
       .then(r => r.json())
       .then(routes => {
         const firstComing = routes.straightRoutes[0].arrival;
@@ -163,7 +165,7 @@ function App() {
 
   return (
     <div className="App">
-      <p>Дата: {date}</p>
+      <p>Дата: {today}</p>
       <div className={'tablesTitle'}>
         <span>Туда</span>
         <span>Обратно</span>
