@@ -1,55 +1,7 @@
-import React from 'react';
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react';
 import moment from 'moment';
-
-
-function padTo2Digits(num: number) {
-  return num.toString().padStart(2, '0');
-}
-
-function convertMsToHM(milliseconds: number) {
-  let seconds = Math.floor(milliseconds / 1000);
-  let minutes = Math.floor(seconds / 60);
-  let hours = Math.floor(minutes / 60);
-  seconds = seconds % 60;
-  minutes = seconds >= 30 ? minutes + 1 : minutes;
-  minutes = minutes % 60;
-  hours = hours % 24;
-
-  return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
-}
-
-const dateFormat = (date: string) => {
-  const toLoc = new Date(date).toLocaleTimeString();
-  return toLoc.substring(0, toLoc.length - 3);
-}
-
-// @ts-ignore
-const RoutesTable = ({routes, name = 'no-name'}) => {
-
-  return (
-    <table>
-      <thead>
-      <tr>
-        <th>Откуда</th>
-        <th>Куда</th>
-        <th>Убыл</th>
-        <th>Прибыл</th>
-      </tr>
-      </thead>
-      <tbody>
-      {routes.map((route: any) => (
-        <tr key={route.from + route.to + route.departure + route.arrival}>
-          <td>{route.from}</td>
-          <td>{route.to}</td>
-          <td>{dateFormat(route.departure)}</td>
-          <td>{dateFormat(route.arrival)}</td>
-        </tr>
-      ))}
-      </tbody>
-    </table>
-  );
-}
+import {convertMsToHM, dateFormat} from "./date";
+import useSWR from 'swr'
 
 interface IRoute {
   from: string;
@@ -144,35 +96,69 @@ const ResultRoutes = ({routes}) => {
   )
 }
 
-const today = moment().format('YYYY-MM-DD');
+// @ts-ignore
+const OriginalRoutesTable = ({routes, name = 'no-name'}) => {
+  return (
+    <table id={name}>
+      <thead>
+      <tr>
+        <th>Откуда</th>
+        <th>Куда</th>
+        <th>Убыл</th>
+        <th>Прибыл</th>
+      </tr>
+      </thead>
+      <tbody>
+      {routes.map((route: any) => (
+        <tr key={route.from + route.to + route.departure + route.arrival}>
+          <td>{route.from}</td>
+          <td>{route.to}</td>
+          <td>{dateFormat(route.departure)}</td>
+          <td>{dateFormat(route.arrival)}</td>
+        </tr>
+      ))}
+      </tbody>
+    </table>
+  );
+}
+
+// @ts-ignore
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 function App() {
-  const [routes, setRoutes] = useState<any>({
-    straightRoutes: [],
-    reversedRoutes: [],
-  });
+  const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
 
-  useEffect(() => {
-    fetch('api/raspisanie?date=' + today)
-      .then(r => r.json())
-      .then(routes => {
-        const firstComing = routes.straightRoutes[0].arrival;
-        routes.reversedRoutes = routes.reversedRoutes
-          .filter((route: any) => new Date(route.departure) > new Date(firstComing))
-        setRoutes(routes)
-      })
-  }, [])
+  const {data: routes, error, isLoading} = useSWR(`api/raspisanie?date=${date}`, fetcher)
+  if (routes) {
+    const firstComing = routes.straightRoutes[0].arrival;
+    routes.reversedRoutes = routes.reversedRoutes.filter((route: any) => new Date(route.departure) > new Date(firstComing));
+  }
 
   return (
     <div className="App">
-      <p>Дата: {today}</p>
-      <div className={'tablesTitle'}>
-        <span>Туда</span>
-        <span>Обратно</span>
+      <div className={'control-row'}>
+        <span>Дата: {date}</span>
+        <button style={{background: '#f3e3e3'}} onClick={() => setDate(moment().add(1, 'd').format('YYYY-MM-DD'))}>
+          Завтра
+        </button>
+        <button style={{background: '#f3e3e3'}} onClick={() => setDate(moment().format('YYYY-MM-DD'))}>
+          Сегодня
+        </button>
       </div>
-      <RoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
-      <RoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
-      <ResultRoutes routes={routes}/>
+      <br/>
+      {isLoading && <div>загрузка...</div>}
+      {error && <div>ошибка загрузки</div>}
+      {routes &&
+        <>
+          <div className={'tablesTitle'}>
+            <span>Туда</span>
+            <span>Обратно</span>
+          </div>
+          <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
+          <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
+          <ResultRoutes routes={routes}/>
+        </>
+      }
     </div>
   )
 }

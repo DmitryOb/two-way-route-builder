@@ -124,3 +124,16 @@ table {
   display: flex;
   justify-content: space-around;
 }
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  box-shadow: 0 1px 4px #2f9b9b;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.control-row > * {
+  margin: 10px;
+}
