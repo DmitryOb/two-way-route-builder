@@ -4,6 +4,19 @@ import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
 import {OriginalRoutesTable} from "./OriginalRoutesTable";
 import DiscreteSliderLabel from "./DiscreteSliderLabel";
+import create from "zustand";
+
+// @ts-ignore
+const appStore = create((set) => ({
+  bears: 0,
+  // const bears = appStore((state) => state.bears);
+  increasePopulation: (myNum: any) => set(
+    (state: any) => ({bears: state.bears + myNum})
+  ),
+  // const increasePopulation = appStore((state) => state.increasePopulation);
+  // <button onClick={() => increasePopulation(2)}>one up</button>
+  removeAllBears: () => set({bears: 0}),
+}))
 
 interface IRoute {
   from: string;
