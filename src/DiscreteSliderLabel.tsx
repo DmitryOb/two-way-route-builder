@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
+import {appStore} from "./App";
 
 const marks = [
   {
@@ -18,7 +19,13 @@ const marks = [
 ];
 
 // @ts-ignore
-export default function DiscreteSliderLabel({onSliderChange}) {
+export default function DiscreteSliderLabel() {
+  // @ts-ignore
+  const setStaying = appStore((state) => state.setStaying);
+
+  const handleSliderChange = (event: any) => {
+    setStaying(event.target.value)
+  }
 
   return (
     <div style={{boxShadow: '0 1px 4px #2f9b9b', borderRadius: '10px'}}>
@@ -32,7 +39,7 @@ export default function DiscreteSliderLabel({onSliderChange}) {
           marks={marks}
           valueLabelDisplay="on"
           max={300}
-          onChange={onSliderChange}
+          onChange={handleSliderChange}
         />
       </Box>
       <span>&#8593;</span>

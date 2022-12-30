@@ -18,3 +18,11 @@ export const dateFormat = (date: string) => {
   const toLoc = new Date(date).toLocaleTimeString();
   return toLoc.substring(0, toLoc.length - 3);
 }
+
+// @ts-ignore
+export const getMsInCity = (departure, arrival) => {
+  const date1 = Date.parse(new Date(departure).toString());
+  const date2 = Date.parse(new Date(arrival).toString());
+
+  return date1 - date2;
+}

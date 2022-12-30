@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import {Group, IGroup, IRoute} from "../App";
+import {Group, IRoute} from "../App";
 import { IApiRoutes } from '../ClassicRoutesView/ClassicRoutesView';
+import {getMsInCity} from "../date";
 
 const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
   const resultedGroups: IGroup[] = [];
@@ -13,10 +14,12 @@ const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) =
       (reverseRoute: any) => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
     )
     for (const possibleBackWayRoute of possibleBackWayRoutes) {
+      const msInCity = getMsInCity(possibleBackWayRoute.departure, straightRoute.arrival);
       // @ts-ignore
       group.bindingRoutes.push({
         straight: straightRoute,
         reversed: possibleBackWayRoute,
+        msInCity,
       })
     }
     resultedGroups.push(group);
@@ -27,6 +30,17 @@ const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) =
 
 interface ResultRoutesProps {
   routes: IApiRoutes
+}
+
+export interface IBindingRoutes {
+  straight: IRoute,
+  reversed: IRoute,
+  msInCity: number,
+}
+
+interface IGroup {
+  startFrom: any;
+  bindingRoutes: IBindingRoutes[]
 }
 
 const ResultRoutes: FC<ResultRoutesProps> = ({routes}) => {

@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import moment from 'moment';
-import {convertMsToHM, dateFormat} from "./date";
+import {convertMsToHM, dateFormat, getMsInCity} from "./date";
 import useSWR from 'swr'
 import DiscreteSliderLabel from "./DiscreteSliderLabel";
 import create from "zustand";
 import ClassicRoutesView from "./ClassicRoutesView/ClassicRoutesView";
-import ResultRoutes from "./ResultRoutes/ResultRoutes";
+import ResultRoutes, {IBindingRoutes} from "./ResultRoutes/ResultRoutes";
 
 // @ts-ignore
-const appStore = create((set) => ({
+export const appStore = create((set) => ({
   staying: 60,
   setStaying: (minutes: any) => set(
     (state: any) => ({...state, staying: minutes})
@@ -23,55 +23,48 @@ export interface IRoute {
   arrival: string; // прибытие
 }
 
-interface IBindingRoutes {
-  straight: IRoute,
-  reversed: IRoute,
-}
-
-export interface IGroup {
-  startFrom: any;
-  bindingRoutes: IBindingRoutes[]
-}
-
 // @ts-ignore
-const BindingRoute = ({straight, reversed}) => {
-  const [cityTime, setCityTime] = useState({
-    ms: 0,
-    string: '',
-  });
-
-  // @ts-ignore
-  const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
-  const objFilterMs = {
-    min: stayingFilterMs - stayingFilterMs / 100 * 15,
-    max: stayingFilterMs + stayingFilterMs / 100 * 15
-  }
-  const cond1 = cityTime.ms > objFilterMs.min;
-  const cond2 = cityTime.ms < objFilterMs.max;
-
-  useEffect(() => {
-    const date1 = Date.parse(new Date(reversed.departure).toString());
-    const date2 = Date.parse(new Date(straight.arrival).toString());
-    const msInCity: number = date1 - date2;
-    setCityTime({
-      ms: msInCity,
-      string: convertMsToHM(msInCity),
-    })
-  }, [])
+const BindingRoute = ({straight, reversed, msInCity}) => {
+  const cityTimeString = convertMsToHM(msInCity);
 
   return (
     <div style={{display: "flex", justifyContent: "space-between"}}>
       <span>В Сочи: {dateFormat(straight.arrival)}</span>
       <span>
-          Время в городе: {cityTime.string}
+          Время в городе: {cityTimeString}
         </span>
       <span>Дома: {dateFormat(reversed.arrival)}</span>
     </div>
   )
 }
 
+const getMinMax = (stayingFilterMs: number) => {
+  const thirtyMinutesInMs = 30 * 60 * 1000;
+
+  return {
+    minimumMs: stayingFilterMs - thirtyMinutesInMs,
+    maximumMs: stayingFilterMs + thirtyMinutesInMs,
+  }
+}
+
 // @ts-ignore
 export const Group = ({bindingRoutes, startFrom}) => {
+  // @ts-ignore
+  const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
+  const {minimumMs, maximumMs} = getMinMax(stayingFilterMs);
+
+  const bindingRoutesFiltered = bindingRoutes.filter((bindingRoute: IBindingRoutes) => {
+    if (bindingRoute.msInCity < minimumMs || bindingRoute.msInCity > maximumMs) {
+      return false;
+    }
+
+    return true
+  })
+
+  if (bindingRoutesFiltered.length < 1) {
+    return null
+  }
+
   return (
     <div style={{padding: '20px', border: '1px solid'}}>
       <p>
@@ -83,6 +76,7 @@ export const Group = ({bindingRoutes, startFrom}) => {
             key={binRoute.straight.arrival + binRoute.reversed.arrival}
             reversed={binRoute.reversed}
             straight={binRoute.straight}
+            msInCity={binRoute.msInCity}
           />
         ))}
       </div>
@@ -90,22 +84,14 @@ export const Group = ({bindingRoutes, startFrom}) => {
   );
 }
 
-
-
-
-// @ts-ignore
-const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
-
 function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
 
-  // @ts-ignore
-  const setStaying = appStore((state) => state.setStaying);
-  const handleSliderChange = (event: any) => {
-    setStaying(event.target.value)
-  }
-
-  const {data: routes, error, isLoading} = useSWR(`api/raspisanie?date=${date}`, fetcher)
+  const {data: routes, error, isLoading} = useSWR(
+    `api/raspisanie?date=${date}`,
+    // @ts-ignore
+    (...args: any[]) => fetch(...args).then(res => res.json())
+  )
   if (routes) {
     const firstComing = routes.straightRoutes[0].arrival;
     routes.reversedRoutes = routes.reversedRoutes.filter((route: any) => new Date(route.departure) > new Date(firstComing));
@@ -122,7 +108,7 @@ function App() {
           Сегодня
         </button>
       </div>
-      <DiscreteSliderLabel onSliderChange={handleSliderChange}/>
+      <DiscreteSliderLabel/>
       <br/>
       {isLoading && <div>загрузка...</div>}
       {error && <div>ошибка загрузки</div>}
