@@ -58,7 +58,7 @@ const BindingRoute = ({straight, reversed}) => {
     })
   }, [])
 
-  return cond1 && cond2 && (
+  return (
     <div style={{display: "flex", justifyContent: "space-between"}}>
       <span>В Сочи: {dateFormat(straight.arrival)}</span>
       <span>
