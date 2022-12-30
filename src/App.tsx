@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import moment from 'moment';
 import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
+import {OriginalRoutesTable} from "./OriginalRoutesTable";
+import DiscreteSliderLabel from "./DiscreteSliderLabel";
 
 interface IRoute {
   from: string;
@@ -64,7 +66,7 @@ const Group = ({bindingRoutes, startFrom}) => {
 }
 
 // @ts-ignore
-const ResultRoutes = ({routes}) => {
+const ResultRoutes = ({routes, timeInCity}) => {
   const straightRoutes: IRoute[] = routes.straightRoutes;
   const reversedRoutes: IRoute[] = routes.reversedRoutes;
 
@@ -97,36 +99,15 @@ const ResultRoutes = ({routes}) => {
 }
 
 // @ts-ignore
-const OriginalRoutesTable = ({routes, name = 'no-name'}) => {
-  return (
-    <table id={name}>
-      <thead>
-      <tr>
-        <th>Откуда</th>
-        <th>Куда</th>
-        <th>Убыл</th>
-        <th>Прибыл</th>
-      </tr>
-      </thead>
-      <tbody>
-      {routes.map((route: any) => (
-        <tr key={route.from + route.to + route.departure + route.arrival}>
-          <td>{route.from}</td>
-          <td>{route.to}</td>
-          <td>{dateFormat(route.departure)}</td>
-          <td>{dateFormat(route.arrival)}</td>
-        </tr>
-      ))}
-      </tbody>
-    </table>
-  );
-}
-
-// @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [timeInCity, setTimeInCity] = useState(null);
+
+  const handleSliderChange = (event: any) => {
+    setTimeInCity(event.target.value)
+  }
 
   const {data: routes, error, isLoading} = useSWR(`api/raspisanie?date=${date}`, fetcher)
   if (routes) {
@@ -145,18 +126,15 @@ function App() {
           Сегодня
         </button>
       </div>
+      <DiscreteSliderLabel onSliderChange={handleSliderChange}/>
       <br/>
       {isLoading && <div>загрузка...</div>}
       {error && <div>ошибка загрузки</div>}
       {routes &&
         <>
-          <div className={'tablesTitle'}>
-            <span>Туда</span>
-            <span>Обратно</span>
-          </div>
           <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
           <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
-          <ResultRoutes routes={routes}/>
+          <ResultRoutes routes={routes} timeInCity={timeInCity}/>
         </>
       }
     </div>
