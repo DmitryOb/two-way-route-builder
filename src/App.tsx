@@ -2,6 +2,17 @@ import React, {useEffect, useState} from 'react';
 import moment from 'moment';
 import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
+import {OriginalRoutesTable} from "./OriginalRoutesTable";
+import DiscreteSliderLabel from "./DiscreteSliderLabel";
+import create from "zustand";
+
+// @ts-ignore
+const appStore = create((set) => ({
+  staying: 60,
+  setStaying: (minutes: any) => set(
+    (state: any) => ({...state, staying: minutes})
+  ),
+}))
 
 interface IRoute {
   from: string;
@@ -23,21 +34,36 @@ interface IGroup {
 
 // @ts-ignore
 const BindingRoute = ({straight, reversed}) => {
-  const [cityTime, setCityTime] = useState('');
+  const [cityTime, setCityTime] = useState({
+    ms: 0,
+    string: '',
+  });
+
+  // @ts-ignore
+  const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
+  const objFilterMs = {
+    min: stayingFilterMs - stayingFilterMs / 100 * 15,
+    max: stayingFilterMs + stayingFilterMs / 100 * 15
+  }
+  const cond1 = cityTime.ms > objFilterMs.min;
+  const cond2 = cityTime.ms < objFilterMs.max;
 
   useEffect(() => {
     const date1 = Date.parse(new Date(reversed.departure).toString());
     const date2 = Date.parse(new Date(straight.arrival).toString());
     const msInCity: number = date1 - date2;
-    setCityTime(convertMsToHM(msInCity))
-  })
+    setCityTime({
+      ms: msInCity,
+      string: convertMsToHM(msInCity),
+    })
+  }, [])
 
-  return (
+  return cond1 && cond2 && (
     <div style={{display: "flex", justifyContent: "space-between"}}>
       <span>В Сочи: {dateFormat(straight.arrival)}</span>
       <span>
-        Время в городе: {cityTime}
-      </span>
+          Время в городе: {cityTime.string}
+        </span>
       <span>Дома: {dateFormat(reversed.arrival)}</span>
     </div>
   )
@@ -63,11 +89,7 @@ const Group = ({bindingRoutes, startFrom}) => {
   );
 }
 
-// @ts-ignore
-const ResultRoutes = ({routes}) => {
-  const straightRoutes: IRoute[] = routes.straightRoutes;
-  const reversedRoutes: IRoute[] = routes.reversedRoutes;
-
+const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
   const resultedGroups: IGroup[] = [];
   for (const straightRoute of straightRoutes) {
     const group = {
@@ -75,7 +97,7 @@ const ResultRoutes = ({routes}) => {
       bindingRoutes: []
     };
     const possibleBackWayRoutes: IRoute[] = reversedRoutes.filter(
-      reverseRoute => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
+      (reverseRoute: any) => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
     )
     for (const possibleBackWayRoute of possibleBackWayRoutes) {
       // @ts-ignore
@@ -87,6 +109,16 @@ const ResultRoutes = ({routes}) => {
     resultedGroups.push(group);
   }
 
+  return resultedGroups;
+}
+
+// @ts-ignore
+const ResultRoutes = ({routes}) => {
+  const straightRoutes: IRoute[] = routes.straightRoutes;
+  const reversedRoutes: IRoute[] = routes.reversedRoutes;
+
+  const resultedGroups: IGroup[] = getResultedGroups(straightRoutes, reversedRoutes);
+
   return (
     <div id={'result-routes'}>
       {resultedGroups.map(group =>
@@ -97,36 +129,16 @@ const ResultRoutes = ({routes}) => {
 }
 
 // @ts-ignore
-const OriginalRoutesTable = ({routes, name = 'no-name'}) => {
-  return (
-    <table id={name}>
-      <thead>
-      <tr>
-        <th>Откуда</th>
-        <th>Куда</th>
-        <th>Убыл</th>
-        <th>Прибыл</th>
-      </tr>
-      </thead>
-      <tbody>
-      {routes.map((route: any) => (
-        <tr key={route.from + route.to + route.departure + route.arrival}>
-          <td>{route.from}</td>
-          <td>{route.to}</td>
-          <td>{dateFormat(route.departure)}</td>
-          <td>{dateFormat(route.arrival)}</td>
-        </tr>
-      ))}
-      </tbody>
-    </table>
-  );
-}
-
-// @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+
+  // @ts-ignore
+  const setStaying = appStore((state) => state.setStaying);
+  const handleSliderChange = (event: any) => {
+    setStaying(event.target.value)
+  }
 
   const {data: routes, error, isLoading} = useSWR(`api/raspisanie?date=${date}`, fetcher)
   if (routes) {
@@ -145,15 +157,12 @@ function App() {
           Сегодня
         </button>
       </div>
+      <DiscreteSliderLabel onSliderChange={handleSliderChange}/>
       <br/>
       {isLoading && <div>загрузка...</div>}
       {error && <div>ошибка загрузки</div>}
       {routes &&
         <>
-          <div className={'tablesTitle'}>
-            <span>Туда</span>
-            <span>Обратно</span>
-          </div>
           <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
           <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
           <ResultRoutes routes={routes}/>
