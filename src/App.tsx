@@ -8,14 +8,10 @@ import create from "zustand";
 
 // @ts-ignore
 const appStore = create((set) => ({
-  bears: 0,
-  // const bears = appStore((state) => state.bears);
-  increasePopulation: (myNum: any) => set(
-    (state: any) => ({bears: state.bears + myNum})
+  staying: 60,
+  setStaying: (minutes: any) => set(
+    (state: any) => ({...state, staying: minutes})
   ),
-  // const increasePopulation = appStore((state) => state.increasePopulation);
-  // <button onClick={() => increasePopulation(2)}>one up</button>
-  removeAllBears: () => set({bears: 0}),
 }))
 
 interface IRoute {
@@ -38,21 +34,36 @@ interface IGroup {
 
 // @ts-ignore
 const BindingRoute = ({straight, reversed}) => {
-  const [cityTime, setCityTime] = useState('');
+  const [cityTime, setCityTime] = useState({
+    ms: 0,
+    string: '',
+  });
+
+  // @ts-ignore
+  const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
+  const objFilterMs = {
+    min: stayingFilterMs - stayingFilterMs / 100 * 15,
+    max: stayingFilterMs + stayingFilterMs / 100 * 15
+  }
+  const cond1 = cityTime.ms > objFilterMs.min;
+  const cond2 = cityTime.ms < objFilterMs.max;
 
   useEffect(() => {
     const date1 = Date.parse(new Date(reversed.departure).toString());
     const date2 = Date.parse(new Date(straight.arrival).toString());
     const msInCity: number = date1 - date2;
-    setCityTime(convertMsToHM(msInCity))
-  })
+    setCityTime({
+      ms: msInCity,
+      string: convertMsToHM(msInCity),
+    })
+  }, [])
 
-  return (
+  return cond1 && cond2 && (
     <div style={{display: "flex", justifyContent: "space-between"}}>
       <span>В Сочи: {dateFormat(straight.arrival)}</span>
       <span>
-        Время в городе: {cityTime}
-      </span>
+          Время в городе: {cityTime.string}
+        </span>
       <span>Дома: {dateFormat(reversed.arrival)}</span>
     </div>
   )
@@ -78,11 +89,7 @@ const Group = ({bindingRoutes, startFrom}) => {
   );
 }
 
-// @ts-ignore
-const ResultRoutes = ({routes, timeInCity}) => {
-  const straightRoutes: IRoute[] = routes.straightRoutes;
-  const reversedRoutes: IRoute[] = routes.reversedRoutes;
-
+const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
   const resultedGroups: IGroup[] = [];
   for (const straightRoute of straightRoutes) {
     const group = {
@@ -90,7 +97,7 @@ const ResultRoutes = ({routes, timeInCity}) => {
       bindingRoutes: []
     };
     const possibleBackWayRoutes: IRoute[] = reversedRoutes.filter(
-      reverseRoute => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
+      (reverseRoute: any) => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
     )
     for (const possibleBackWayRoute of possibleBackWayRoutes) {
       // @ts-ignore
@@ -101,6 +108,16 @@ const ResultRoutes = ({routes, timeInCity}) => {
     }
     resultedGroups.push(group);
   }
+
+  return resultedGroups;
+}
+
+// @ts-ignore
+const ResultRoutes = ({routes}) => {
+  const straightRoutes: IRoute[] = routes.straightRoutes;
+  const reversedRoutes: IRoute[] = routes.reversedRoutes;
+
+  const resultedGroups: IGroup[] = getResultedGroups(straightRoutes, reversedRoutes);
 
   return (
     <div id={'result-routes'}>
@@ -116,10 +133,11 @@ const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
-  const [timeInCity, setTimeInCity] = useState(null);
 
+  // @ts-ignore
+  const setStaying = appStore((state) => state.setStaying);
   const handleSliderChange = (event: any) => {
-    setTimeInCity(event.target.value)
+    setStaying(event.target.value)
   }
 
   const {data: routes, error, isLoading} = useSWR(`api/raspisanie?date=${date}`, fetcher)
@@ -147,7 +165,7 @@ function App() {
         <>
           <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
           <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
-          <ResultRoutes routes={routes} timeInCity={timeInCity}/>
+          <ResultRoutes routes={routes}/>
         </>
       }
     </div>
