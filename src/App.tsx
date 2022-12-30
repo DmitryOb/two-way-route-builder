@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import moment from 'moment';
 import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
-import {OriginalRoutesTable} from "./OriginalRoutesTable";
 import DiscreteSliderLabel from "./DiscreteSliderLabel";
 import create from "zustand";
+import ClassicRoutesView from "./ClassicRoutesView/ClassicRoutesView";
+import ResultRoutes from "./ResultRoutes/ResultRoutes";
 
 // @ts-ignore
 const appStore = create((set) => ({
@@ -14,7 +15,7 @@ const appStore = create((set) => ({
   ),
 }))
 
-interface IRoute {
+export interface IRoute {
   from: string;
   to: string;
   // '2022-12-28T07:22:00+03:00'
@@ -27,7 +28,7 @@ interface IBindingRoutes {
   reversed: IRoute,
 }
 
-interface IGroup {
+export interface IGroup {
   startFrom: any;
   bindingRoutes: IBindingRoutes[]
 }
@@ -70,7 +71,7 @@ const BindingRoute = ({straight, reversed}) => {
 }
 
 // @ts-ignore
-const Group = ({bindingRoutes, startFrom}) => {
+export const Group = ({bindingRoutes, startFrom}) => {
   return (
     <div style={{padding: '20px', border: '1px solid'}}>
       <p>
@@ -89,44 +90,8 @@ const Group = ({bindingRoutes, startFrom}) => {
   );
 }
 
-const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
-  const resultedGroups: IGroup[] = [];
-  for (const straightRoute of straightRoutes) {
-    const group = {
-      startFrom: straightRoute.departure,
-      bindingRoutes: []
-    };
-    const possibleBackWayRoutes: IRoute[] = reversedRoutes.filter(
-      (reverseRoute: any) => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
-    )
-    for (const possibleBackWayRoute of possibleBackWayRoutes) {
-      // @ts-ignore
-      group.bindingRoutes.push({
-        straight: straightRoute,
-        reversed: possibleBackWayRoute,
-      })
-    }
-    resultedGroups.push(group);
-  }
 
-  return resultedGroups;
-}
 
-// @ts-ignore
-const ResultRoutes = ({routes}) => {
-  const straightRoutes: IRoute[] = routes.straightRoutes;
-  const reversedRoutes: IRoute[] = routes.reversedRoutes;
-
-  const resultedGroups: IGroup[] = getResultedGroups(straightRoutes, reversedRoutes);
-
-  return (
-    <div id={'result-routes'}>
-      {resultedGroups.map(group =>
-        <Group key={group.startFrom} bindingRoutes={group.bindingRoutes} startFrom={group.startFrom}/>
-      )}
-    </div>
-  )
-}
 
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -163,8 +128,7 @@ function App() {
       {error && <div>ошибка загрузки</div>}
       {routes &&
         <>
-          <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
-          <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
+          <ClassicRoutesView routes={routes}/>
           <ResultRoutes routes={routes}/>
         </>
       }
