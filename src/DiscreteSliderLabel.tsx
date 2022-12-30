@@ -16,15 +16,26 @@ const marks = [
     value: 180,
     label: '3 часа',
   },
+  {
+    value: 240,
+    label: '4 часа',
+  },
+  {
+    value: 300,
+    label: '∞',
+  },
 ];
 
 // @ts-ignore
 export default function DiscreteSliderLabel() {
   // @ts-ignore
   const setStaying = appStore((state) => state.setStaying);
+  // @ts-ignore
+  const setFilter = appStore((state) => state.setFilter);
 
   const handleSliderChange = (event: any) => {
-    setStaying(event.target.value)
+    setStaying(event.target.value);
+    setFilter(event.target.value !== 300)
   }
 
   return (
@@ -43,7 +54,7 @@ export default function DiscreteSliderLabel() {
         />
       </Box>
       <span>&#8593;</span>
-      <span>Сколько ~ минут в городе?</span>
+      <span>Сколько времени займут дела?</span>
     </div>
   );
 }

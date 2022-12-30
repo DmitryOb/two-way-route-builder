@@ -1,17 +1,21 @@
 import React, {useState} from 'react';
 import moment from 'moment';
-import {convertMsToHM, dateFormat, getMsInCity} from "./date";
+import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
 import DiscreteSliderLabel from "./DiscreteSliderLabel";
 import create from "zustand";
 import ClassicRoutesView from "./ClassicRoutesView/ClassicRoutesView";
-import ResultRoutes, {IBindingRoutes} from "./ResultRoutes/ResultRoutes";
+import ResultRoutes from "./ResultRoutes/ResultRoutes";
 
 // @ts-ignore
 export const appStore = create((set) => ({
   staying: 60,
   setStaying: (minutes: any) => set(
     (state: any) => ({...state, staying: minutes})
+  ),
+  filter: true,
+  setFilter: (boolValue: any) => set(
+    (state: any) => ({...state, filter: boolValue})
   ),
 }))
 
@@ -24,7 +28,7 @@ export interface IRoute {
 }
 
 // @ts-ignore
-const BindingRoute = ({straight, reversed, msInCity}) => {
+export const BindingRoute = ({straight, reversed, msInCity}) => {
   const cityTimeString = convertMsToHM(msInCity);
 
   return (
@@ -36,52 +40,6 @@ const BindingRoute = ({straight, reversed, msInCity}) => {
       <span>Дома: {dateFormat(reversed.arrival)}</span>
     </div>
   )
-}
-
-const getMinMax = (stayingFilterMs: number) => {
-  const thirtyMinutesInMs = 30 * 60 * 1000;
-
-  return {
-    minimumMs: stayingFilterMs - thirtyMinutesInMs,
-    maximumMs: stayingFilterMs + thirtyMinutesInMs,
-  }
-}
-
-// @ts-ignore
-export const Group = ({bindingRoutes, startFrom}) => {
-  // @ts-ignore
-  const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
-  const {minimumMs, maximumMs} = getMinMax(stayingFilterMs);
-
-  const bindingRoutesFiltered = bindingRoutes.filter((bindingRoute: IBindingRoutes) => {
-    if (bindingRoute.msInCity < minimumMs || bindingRoute.msInCity > maximumMs) {
-      return false;
-    }
-
-    return true
-  })
-
-  if (bindingRoutesFiltered.length < 1) {
-    return null
-  }
-
-  return (
-    <div style={{padding: '20px', border: '1px solid'}}>
-      <p>
-        Отправление в <span style={{fontSize: '20px'}}>{dateFormat(startFrom)}</span>
-      </p>
-      <div>
-        {bindingRoutes.map((binRoute: IBindingRoutes) => (
-          <BindingRoute
-            key={binRoute.straight.arrival + binRoute.reversed.arrival}
-            reversed={binRoute.reversed}
-            straight={binRoute.straight}
-            msInCity={binRoute.msInCity}
-          />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 function App() {

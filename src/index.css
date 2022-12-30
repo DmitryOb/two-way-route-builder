@@ -149,3 +149,13 @@ th, td {
 .control-row > * {
   margin: 10px;
 }
+
+.result-routes-group {
+  padding: 20px;
+  border: 1px solid;
+}
+@media (max-width: 767px) {
+  .result-routes-group {
+    padding: 5px;
+  }
+}
