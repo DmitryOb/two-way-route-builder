@@ -6,6 +6,8 @@ import DiscreteSliderLabel from "./DiscreteSliderLabel";
 import create from "zustand";
 import ClassicRoutesView from "./ClassicRoutesView/ClassicRoutesView";
 import ResultRoutes from "./ResultRoutes/ResultRoutes";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 // @ts-ignore
 export const appStore = create((set) => ({
@@ -44,12 +46,14 @@ export const BindingRoute = ({straight, reversed, msInCity}) => {
 
 const SOVHOZ = `s9613229`; // Sovhoz
 const SOCHI = `c239`; // Sochi
+const IMERITIN_RESORT = `s9812789`; // Imeretinskiy Kurort
 
 function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [goesTo, setGoesTo] = useState(SOCHI);
 
   const {data: routes, error, isLoading} = useSWR(
-    `api/raspisanie?date=${date}&from=${SOVHOZ}&to=${SOCHI}`,
+    `api/raspisanie?date=${date}&from=${SOVHOZ}&to=${goesTo}`,
     // @ts-ignore
     (...args: any[]) => fetch(...args).then(res => res.json())
   )
@@ -58,16 +62,41 @@ function App() {
     routes.reversedRoutes = routes.reversedRoutes.filter((route: any) => new Date(route.departure) > new Date(firstComing));
   }
 
+  // показать кнопку если после нажатия на неё дата станет = сегодня или больше чем сегодня
+
+  const isShowBackButton = true;
+
   return (
     <div className="App">
       <div className={'control-row'}>
-        <span>Дата: {date}</span>
-        <button style={{background: '#f3e3e3'}} onClick={() => setDate(moment().add(1, 'd').format('YYYY-MM-DD'))}>
-          Завтра
-        </button>
-        <button style={{background: '#f3e3e3'}} onClick={() => setDate(moment().format('YYYY-MM-DD'))}>
-          Сегодня
-        </button>
+        <div className={'control-row-first'}>
+          {isShowBackButton &&
+            <button onClick={() => {
+              setDate(moment(date).subtract(1, 'd').format('YYYY-MM-DD'))
+            }}>
+              <ArrowBackIosNewIcon fontSize={"small"}/>
+            </button>
+          }
+          <div>
+            <span>{date}</span>
+            <br/>
+            {date === moment().format('YYYY-MM-DD') &&
+              <span>Сегодня</span>
+            }
+          </div>
+          <button onClick={() => {
+            setDate(moment(date).add(1, 'd').format('YYYY-MM-DD'))
+          }}>
+            <ArrowForwardIosIcon fontSize={"small"}/>
+          </button>
+        </div>
+        <div>
+          <button onClick={() => {
+            setGoesTo(IMERITIN_RESORT)
+          }}>
+            Хочу на курорт!
+          </button>
+        </div>
       </div>
       <DiscreteSliderLabel/>
       <br/>
