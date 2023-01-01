@@ -41,10 +41,10 @@ export default function DiscreteSliderLabel() {
   return (
     <div style={{boxShadow: '0 1px 4px #2f9b9b', borderRadius: '10px'}}>
       <br/>
-      <Box paddingLeft={'12px'} paddingRight={'12px'}>
+      <Box paddingLeft={'25px'} paddingRight={'25px'}>
         <Slider
           aria-label="Always visible"
-          defaultValue={60}
+          defaultValue={300}
           step={10}
           min={10}
           marks={marks}

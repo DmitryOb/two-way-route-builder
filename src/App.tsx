@@ -13,7 +13,7 @@ export const appStore = create((set) => ({
   setStaying: (minutes: any) => set(
     (state: any) => ({...state, staying: minutes})
   ),
-  filter: true,
+  filter: false,
   setFilter: (boolValue: any) => set(
     (state: any) => ({...state, filter: boolValue})
   ),
@@ -42,11 +42,14 @@ export const BindingRoute = ({straight, reversed, msInCity}) => {
   )
 }
 
+const SOVHOZ = `s9613229`; // Sovhoz
+const SOCHI = `c239`; // Sochi
+
 function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
 
   const {data: routes, error, isLoading} = useSWR(
-    `api/raspisanie?date=${date}`,
+    `api/raspisanie?date=${date}&from=${SOVHOZ}&to=${SOCHI}`,
     // @ts-ignore
     (...args: any[]) => fetch(...args).then(res => res.json())
   )
