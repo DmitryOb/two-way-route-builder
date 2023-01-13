@@ -4,7 +4,7 @@ import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
 import DiscreteSliderLabel from "./DiscreteSliderLabel";
 import create from "zustand";
-import ClassicRoutesView, {IApiRoutes} from "./ClassicRoutesView/ClassicRoutesView";
+import ClassicRoutesView, {IApiRoutes, IApiRoutesBE, IRouteBE} from "./ClassicRoutesView/ClassicRoutesView";
 import ResultRoutes from "./ResultRoutes/ResultRoutes";
 import ControlRow from "./ControlRow/ControlRow";
 import {SWRResponse} from "swr/_internal";
@@ -40,9 +40,8 @@ export const appStore = create((set) => ({
 export interface IRoute {
   from: string;
   to: string;
-  // '2022-12-28T07:22:00+03:00'
-  departureStationName: string; // убытие
-  arrivalStationName: string; // прибытие
+  departureTimeString: string; // время убытия '2022-12-28T07:22:00+03:00'
+  arrivalTimeString: string; // время прибытия '2022-12-28T07:22:00+03:00'
 }
 
 // @ts-ignore
@@ -51,14 +50,21 @@ export const BindingRoute = ({straight, reversed, msInCity}) => {
 
   return (
     <div style={{display: "flex", justifyContent: "space-between"}}>
-      <span>В Сочи: {dateFormat(straight.arrivalStationName)}</span>
+      <span>В Сочи: {dateFormat(straight.arrivalTimeString)}</span>
       <span>
           Время в городе: {cityTimeString}
         </span>
-      <span>Дома: {dateFormat(reversed.arrivalStationName)}</span>
+      <span>Дома: {dateFormat(reversed.arrivalTimeString)}</span>
     </div>
   )
 }
+
+const fromBeToFEMapFunc = (route: IRouteBE): IRoute => ({
+  arrivalTimeString: route.arrival,
+  departureTimeString: route.departure,
+  from: route.from,
+  to: route.to
+})
 
 function App() {
   // @ts-ignore
@@ -70,25 +76,32 @@ function App() {
   // @ts-ignore
   const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
 
-  const {data: routes, error, isLoading}: SWRResponse<IApiRoutes> = useSWR(
+  const {data: routes, error, isLoading}: SWRResponse<IApiRoutesBE> = useSWR(
     `api/raspisanie?date=${date}&from=${SOVHOZ}&to=${goesTo}`,
     // @ts-ignore
     (...args: any[]) => fetch(...args).then((res) => res.json()),
-    {fallbackData: {} as IApiRoutes}
+    {
+      fallbackData: {} as IApiRoutesBE,
+    }
   )
   useEffect(() => {
-    if (routes !== undefined && routes.straightRoutes && routes.reversedRoutes) {
-      const firstComing = routes.straightRoutes[0].arrivalStationName;
-      routes.reversedRoutes = routes.reversedRoutes.filter(
-        (route: any) => new Date(route.departureStationName) > new Date(firstComing)
-      );
-      setRoutesState(routes);
+    if (routes !== undefined && Object.keys(routes).length !== 0) {
+      const firstComing = routes.straightRoutes[0].arrival;
+
+      const reversedRoutesFE: IRoute[] = routes.reversedRoutes
+        .filter((route: IRouteBE) => new Date(route.departure) > new Date(firstComing))
+        .map(fromBeToFEMapFunc);
+
+      setRoutesState({
+        straightRoutes: routes.straightRoutes.map(fromBeToFEMapFunc),
+        reversedRoutes: reversedRoutesFE,
+      });
     }
   }, [routes])
 
   return (
     <div className="App">
-      <ControlRow />
+      <ControlRow/>
 
       <DiscreteSliderLabel/>
       <br/>

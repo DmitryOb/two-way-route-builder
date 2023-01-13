@@ -7,14 +7,14 @@ const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) =
   const resultedGroups: IGroup[] = [];
   for (const straightRoute of straightRoutes) {
     const group = {
-      startFrom: straightRoute.departureStationName,
+      startFrom: straightRoute.departureTimeString,
       bindingRoutes: []
     };
     const possibleBackWayRoutes: IRoute[] = reversedRoutes.filter(
-      (reverseRoute: any) => new Date(reverseRoute.departureStationName) > new Date(straightRoute.arrivalStationName)
+      (reverseRoute: any) => new Date(reverseRoute.departureTimeString) > new Date(straightRoute.arrivalTimeString)
     )
     for (const possibleBackWayRoute of possibleBackWayRoutes) {
-      const msInCity = getMsInCity(possibleBackWayRoute.departureStationName, straightRoute.arrivalStationName);
+      const msInCity = getMsInCity(possibleBackWayRoute.departureTimeString, straightRoute.arrivalTimeString);
       // @ts-ignore
       group.bindingRoutes.push({
         straight: straightRoute,
@@ -45,10 +45,7 @@ interface IGroup {
 const ResultRoutes: FC<ResultRoutesProps> = () => {
   // @ts-ignore
   const routes = appStore((state) => state.stateRoutes);
-
-  const straightRoutes = routes.straightRoutes;
-  const reversedRoutes = routes.reversedRoutes;
-  const resultedGroups: IGroup[] = getResultedGroups(straightRoutes, reversedRoutes);
+  const resultedGroups: IGroup[] = getResultedGroups(routes.straightRoutes, routes.reversedRoutes);
 
   return (
     <div className={'result-routes'}>
@@ -105,7 +102,7 @@ export const Group = ({bindingRoutes, startFrom}) => {
       <div>
         {bindingRoutesFiltered.map((binRoute: IBindingRoutes) => (
           <BindingRoute
-            key={binRoute.straight.arrivalStationName + binRoute.reversed.arrivalStationName}
+            key={binRoute.straight.arrivalTimeString + binRoute.reversed.arrivalTimeString}
             reversed={binRoute.reversed}
             straight={binRoute.straight}
             msInCity={binRoute.msInCity}

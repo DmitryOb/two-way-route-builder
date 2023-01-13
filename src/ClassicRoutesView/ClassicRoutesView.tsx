@@ -12,27 +12,40 @@ export interface IApiRoutes {
   reversedRoutes: IRoute[];
 }
 
+export interface IRouteBE {
+  from: string;
+  to: string;
+  departure: string; // время убытия '2022-12-28T07:22:00+03:00'
+  arrival: string; // время прибытия '2022-12-28T07:22:00+03:00'
+}
+
+export interface IApiRoutesBE {
+  straightRoutes: IRouteBE[];
+  reversedRoutes: IRouteBE[];
+}
+
 interface ClassicRoutesViewProps {
 }
 
 const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
   // @ts-ignore
-  const routes = appStore((state) => state.stateRoutes);
+  const routes: IApiRoutes = appStore((state) => state.stateRoutes);
 
   return (
-  <Accordion>
-    <AccordionSummary
-      expandIcon={<ExpandMoreIcon/>}
-      aria-controls="panel1a-content"
-      id="panel1a-header"
-    >
-      <Typography>туда-обратно</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
-      <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
-    </AccordionDetails>
-  </Accordion>
-)};
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon/>}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography>туда-обратно</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
+        <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
+      </AccordionDetails>
+    </Accordion>
+  )
+};
 
 export default ClassicRoutesView;

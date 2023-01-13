@@ -16,37 +16,21 @@ const ControlRow: FC<ControlRowProps> = () => {
   const setDate = appStore((state) => state.setDate);
   // @ts-ignore
   const setGoesTo = appStore((state) => state.setGoesTo);
-  // @ts-ignore
-  const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
-  // @ts-ignore
-  const setRoutesState = appStore((state) => state.setRoutesState);
 
+  //TODO:
   const filterByPossibleFromNow = () => {
-    console.log(stateRoutes);
-
-
-    const filteredRoutes: IApiRoutes = Object.assign(stateRoutes, {});
-    // TODO:
-    // for (const [key, routes] of Object.entries(filteredRoutes)) {
-    //   let curKey = key as 'straightRoutes' | 'reversedRoutes';
-    //   let currentRoutes: IRoute[] = routes;
-    //   // тут нужно straightRoutes отфильтровать так:
-    //   // если new Date()
-    // }
-
-    // const filteredRoutes: IApiRoutes = stateRoutes.map(
-    //   (stateRoute) => {
-    //     return stateRoute
-    //   }
-    // )
-    // const filteredRoutes = (stateRoutes): IApiRoutes => {
-    //   return {
-    //     straightRoutes: [],
-    //     reversedRoutes: [],
-    //   }
-    // }
-    setRoutesState(filteredRoutes);
+  //   const filteredRoutes: IApiRoutes = Object.assign(stateRoutes, {});
+  //   for (const [key, routes] of Object.entries(filteredRoutes)) {
+  //     let curKey = key as 'straightRoutes' | 'reversedRoutes';
+  //     let currentRoutes: IRoute[] = routes;
+  //   }
+  //   setRoutesState(filteredRoutes);
   }
+  // // @ts-ignore
+  // const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
+  // @ts-ignore
+  // const setRoutesState = appStore((state) => state.setRoutesState);
+
 
   // TODO: показать кнопку если после нажатия на неё дата станет = сегодня или больше чем сегодня
   const isShowBackButton = true;
