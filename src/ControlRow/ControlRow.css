@@ -1,0 +1,28 @@
+.control-row {
+  display: grid;
+  box-shadow: 0 1px 4px #2f9b9b;
+  border-radius: 10px;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+}
+
+.control-column-first {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 5px;
+}
+
+.control-column-first button {
+  padding: 2px;
+}
+
+/*.control-row > * {*/
+/*}*/
+
+.control-column-second {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}

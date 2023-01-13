@@ -29,7 +29,6 @@ const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) =
 }
 
 interface ResultRoutesProps {
-  routes: IApiRoutes
 }
 
 export interface IBindingRoutes {
@@ -43,7 +42,10 @@ interface IGroup {
   bindingRoutes: IBindingRoutes[]
 }
 
-const ResultRoutes: FC<ResultRoutesProps> = ({routes}) => {
+const ResultRoutes: FC<ResultRoutesProps> = () => {
+  // @ts-ignore
+  const routes = appStore((state) => state.stateRoutes);
+
   const straightRoutes = routes.straightRoutes;
   const reversedRoutes = routes.reversedRoutes;
   const resultedGroups: IGroup[] = getResultedGroups(straightRoutes, reversedRoutes);

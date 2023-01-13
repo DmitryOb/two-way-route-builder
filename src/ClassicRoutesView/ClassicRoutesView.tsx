@@ -5,8 +5,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import {OriginalRoutesTable} from "../OriginalRoutesTable";
-import {IRoute} from '../App';
-
+import {appStore, IRoute} from '../App';
 
 export interface IApiRoutes {
   straightRoutes: IRoute[];
@@ -14,10 +13,13 @@ export interface IApiRoutes {
 }
 
 interface ClassicRoutesViewProps {
-  routes: IApiRoutes
 }
 
-const ClassicRoutesView: FC<ClassicRoutesViewProps> = ({routes}) => (
+const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
+  // @ts-ignore
+  const routes = appStore((state) => state.stateRoutes);
+
+  return (
   <Accordion>
     <AccordionSummary
       expandIcon={<ExpandMoreIcon/>}
@@ -31,6 +33,6 @@ const ClassicRoutesView: FC<ClassicRoutesViewProps> = ({routes}) => (
       <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
     </AccordionDetails>
   </Accordion>
-);
+)};
 
 export default ClassicRoutesView;

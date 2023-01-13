@@ -135,28 +135,6 @@ th, td {
   justify-content: space-around;
 }
 
-.control-row {
-  display: grid;
-  box-shadow: 0 1px 4px #2f9b9b;
-  border-radius: 10px;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr 1fr;
-}
-
-.control-row-first {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  padding: 5px;
-}
-
-.control-row-first button {
-  padding: 2px;
-}
-.control-row > * {
-  /*margin: 10px;*/
-}
-
 .result-routes-group {
   padding: 20px;
   border: 1px solid;
