@@ -1,16 +1,25 @@
-// @ts-ignore
 import {dateFormat} from "./date";
-import React from "react";
+import React, {FC} from "react";
+import {IRoute} from "./App";
 
-const nameDictionary = {
-  straightRoutes: 'Туда',
-  reversedRoutes: 'Обратно',
+enum EnumNameDictionary {
+  straightRoutes = 'Туда',
+  reversedRoutes = 'Обратно',
 }
 
-// @ts-ignore
-export const OriginalRoutesTable = ({routes, name = 'no-name'}) => {
-  // @ts-ignore
+const nameDictionary: Record<string, EnumNameDictionary> = {
+  straightRoutes: EnumNameDictionary.straightRoutes,
+  reversedRoutes: EnumNameDictionary.reversedRoutes,
+}
+
+interface ClassicRoutesViewProps {
+  routes: IRoute[];
+  name: string;
+}
+
+export const OriginalRoutesTable: FC<ClassicRoutesViewProps> = ({routes, name}) => {
   const tableName = nameDictionary[name];
+
   return (
     <div className={'original-routes-table-wrapper'}>
       {tableName && <div>{tableName}</div>}
@@ -25,11 +34,11 @@ export const OriginalRoutesTable = ({routes, name = 'no-name'}) => {
         </thead>
         <tbody>
         {routes.map((route: any) => (
-          <tr key={route.from + route.to + route.departure + route.arrival}>
+          <tr key={route.from + route.to + route.departureTimeString + route.arrivalTimeString}>
             <td>{route.from}</td>
             <td>{route.to}</td>
-            <td>{dateFormat(route.departure)}</td>
-            <td>{dateFormat(route.arrival)}</td>
+            <td>{dateFormat(route.departureTimeString)}</td>
+            <td>{dateFormat(route.arrivalTimeString)}</td>
           </tr>
         ))}
         </tbody>

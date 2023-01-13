@@ -1,20 +1,20 @@
 import React, { FC } from 'react';
 import {appStore, BindingRoute, IRoute} from "../App";
-import { IApiRoutes } from '../ClassicRoutesView/ClassicRoutesView';
 import {dateFormat, getMsInCity} from "../date";
+import moment from "moment";
 
 const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
   const resultedGroups: IGroup[] = [];
   for (const straightRoute of straightRoutes) {
     const group = {
-      startFrom: straightRoute.departure,
+      startFrom: straightRoute.departureTimeString,
       bindingRoutes: []
     };
     const possibleBackWayRoutes: IRoute[] = reversedRoutes.filter(
-      (reverseRoute: any) => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
+      (reverseRoute: any) => new Date(reverseRoute.departureTimeString) > new Date(straightRoute.arrivalTimeString)
     )
     for (const possibleBackWayRoute of possibleBackWayRoutes) {
-      const msInCity = getMsInCity(possibleBackWayRoute.departure, straightRoute.arrival);
+      const msInCity = getMsInCity(possibleBackWayRoute.departureTimeString, straightRoute.arrivalTimeString);
       // @ts-ignore
       group.bindingRoutes.push({
         straight: straightRoute,
@@ -29,7 +29,6 @@ const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) =
 }
 
 interface ResultRoutesProps {
-  routes: IApiRoutes
 }
 
 export interface IBindingRoutes {
@@ -39,18 +38,22 @@ export interface IBindingRoutes {
 }
 
 interface IGroup {
-  startFrom: any;
+  startFrom: string; // '2023-01-13T22:10:00+03:00'
   bindingRoutes: IBindingRoutes[]
 }
 
-const ResultRoutes: FC<ResultRoutesProps> = ({routes}) => {
-  const straightRoutes = routes.straightRoutes;
-  const reversedRoutes = routes.reversedRoutes;
-  const resultedGroups: IGroup[] = getResultedGroups(straightRoutes, reversedRoutes);
+const ResultRoutes: FC<ResultRoutesProps> = () => {
+  const routes = appStore((state) => state.stateRoutes);
+  const resultedGroups: IGroup[] = getResultedGroups(routes.straightRoutes, routes.reversedRoutes);
+
+  const filterByPossibleIsActive = appStore((state) => state.filterByPossible);
+  const filteredResultedGroups = !filterByPossibleIsActive ?
+    resultedGroups :
+    resultedGroups.filter((group: IGroup) => moment().isBefore(group.startFrom));
 
   return (
     <div className={'result-routes'}>
-      {resultedGroups.map(group =>
+      {filteredResultedGroups.map(group =>
         <Group key={group.startFrom}
                bindingRoutes={group.bindingRoutes}
                startFrom={group.startFrom}
@@ -71,23 +74,25 @@ const getMinMax = (stayingFilterMs: number) => {
   }
 }
 
-// @ts-ignore
-export const Group = ({bindingRoutes, startFrom}) => {
-  // @ts-ignore
+interface IGroupComponent {
+  bindingRoutes: IBindingRoutes[];
+  startFrom: string;
+}
+
+export const Group: FC<IGroupComponent> = ({bindingRoutes, startFrom}) => {
   const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
-  // @ts-ignore
-  const filterIsActive = appStore((state) => state.filter);
+  const filterBySpendTime = appStore((state) => state.filterBySpendTime);
 
   const {minimumMs, maximumMs} = getMinMax(stayingFilterMs);
 
   const bindingRoutesFiltered = bindingRoutes.filter((bindingRoute: IBindingRoutes) => {
-    if (!filterIsActive) {
+    if (!filterBySpendTime) {
       return true
     }
-
     if (bindingRoute.msInCity < minimumMs || bindingRoute.msInCity > maximumMs) {
       return false;
     }
+
     return true
   })
 
@@ -103,7 +108,7 @@ export const Group = ({bindingRoutes, startFrom}) => {
       <div>
         {bindingRoutesFiltered.map((binRoute: IBindingRoutes) => (
           <BindingRoute
-            key={binRoute.straight.arrival + binRoute.reversed.arrival}
+            key={binRoute.straight.arrivalTimeString + binRoute.reversed.arrivalTimeString}
             reversed={binRoute.reversed}
             straight={binRoute.straight}
             msInCity={binRoute.msInCity}
