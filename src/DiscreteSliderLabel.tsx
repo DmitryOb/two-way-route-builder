@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
-import {appStore} from "./App";
+import {appStore, IAppState} from "./App";
 
 const marks = [
   {
@@ -26,12 +26,9 @@ const marks = [
   },
 ];
 
-// @ts-ignore
 export default function DiscreteSliderLabel() {
-  // @ts-ignore
-  const setStaying = appStore((state) => state.setStaying);
-  // @ts-ignore
-  const setSpendTime = appStore((state) => state.setSpendTime);
+  const setStaying = appStore((state: IAppState) => state.setStaying);
+  const setSpendTime = appStore((state: IAppState) => state.setSpendTime);
 
   const handleSliderChange = (event: any) => {
     setStaying(event.target.value);

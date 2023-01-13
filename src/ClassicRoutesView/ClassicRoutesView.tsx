@@ -28,7 +28,6 @@ interface ClassicRoutesViewProps {
 }
 
 const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
-  // @ts-ignore
   const routes: IApiRoutes = appStore((state) => state.stateRoutes);
 
   return (

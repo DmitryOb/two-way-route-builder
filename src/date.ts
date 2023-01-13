@@ -19,8 +19,7 @@ export const dateFormat = (date: string) => {
   return toLoc.substring(0, toLoc.length - 3);
 }
 
-// @ts-ignore
-export const getMsInCity = (departure, arrival) => {
+export const getMsInCity = (departure: string, arrival: string) => {
   const date1 = Date.parse(new Date(departure).toString());
   const date2 = Date.parse(new Date(arrival).toString());
 

@@ -8,32 +8,54 @@ import ClassicRoutesView, {IApiRoutes, IApiRoutesBE, IRouteBE} from "./ClassicRo
 import ResultRoutes from "./ResultRoutes/ResultRoutes";
 import ControlRow from "./ControlRow/ControlRow";
 import {SWRResponse} from "swr/_internal";
+import {StoreApi} from "zustand/vanilla";
+import {UseBoundStore} from "zustand/react";
 
-const SOVHOZ = `s9613229`; // Sovhoz
-const SOCHI = `c239`; // Sochi
-export const IMERITIN_RESORT = `s9812789`; // Imeretinskiy Kurort
+export enum EnumGoesTo {
+  SOVHOZ = `s9613229`,
+  SOCHI = `c239`,
+  IMERITIN_RESORT = `s9812789`,
+}
 
-// @ts-ignore
-export const appStore = create((set) => ({
+export interface IAppState {
+  staying: number;
+  setStaying: (staying: number) => void;
+  filterByPossible: boolean;
+  setPossible: (boolValue: boolean) => void;
+  filterBySpendTime: boolean;
+  setSpendTime: (boolValue: boolean) => void;
+  date: string;
+  setDate: (yyyyMmDd: string) => void;
+  goesTo: EnumGoesTo;
+  setGoesTo: (point: EnumGoesTo) => void;
+  stateRoutes: IApiRoutes;
+  setRoutesState: (routes: IApiRoutes) => void;
+}
+
+export const appStore: UseBoundStore<StoreApi<IAppState>> = create((set): IAppState => ({
   staying: 60,
-  setStaying: (minutes: any) => set(
-    (state: any) => ({...state, staying: minutes})
+  setStaying: (minutes: number) => set(
+    (state: IAppState) => ({...state, staying: minutes})
+  ),
+  filterByPossible: false,
+  setPossible: (boolValue: boolean) => set(
+    (state: IAppState) => ({...state, filterByPossible: boolValue})
   ),
   filterBySpendTime: false,
-  setSpendTime: (boolValue: any) => set(
-    (state: any) => ({...state, filterBySpendTime: boolValue})
+  setSpendTime: (boolValue: boolean) => set(
+    (state: IAppState) => ({...state, filterBySpendTime: boolValue})
   ),
   date: moment().format('YYYY-MM-DD'),
   setDate: (yyyyMmDd: string) => set(
-    (state: any) => ({...state, date: yyyyMmDd})
+    (state: IAppState) => ({...state, date: yyyyMmDd})
   ),
-  goesTo: SOCHI,
-  setGoesTo: (point: string) => set(
-    (state: any) => ({...state, goesTo: point})
+  goesTo: EnumGoesTo.SOCHI,
+  setGoesTo: (point: EnumGoesTo) => set(
+    (state: IAppState) => ({...state, goesTo: point})
   ),
   stateRoutes: {} as IApiRoutes,
   setRoutesState: (routes: IApiRoutes) => set(
-    (state: any) => ({...state, stateRoutes: routes})
+    (state: IAppState) => ({...state, stateRoutes: routes})
   ),
 }))
 
@@ -67,17 +89,13 @@ const fromBeToFEMapFunc = (route: IRouteBE): IRoute => ({
 })
 
 function App() {
-  // @ts-ignore
   const date = appStore((state) => state.date);
-  // @ts-ignore
   const goesTo = appStore((state) => state.goesTo);
-  // @ts-ignore
   const setRoutesState = appStore((state) => state.setRoutesState);
-  // @ts-ignore
   const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
 
   const {data: routes, error, isLoading}: SWRResponse<IApiRoutesBE> = useSWR(
-    `api/raspisanie?date=${date}&from=${SOVHOZ}&to=${goesTo}`,
+    `api/raspisanie?date=${date}&from=${EnumGoesTo.SOVHOZ}&to=${goesTo}`,
     // @ts-ignore
     (...args: any[]) => fetch(...args).then((res) => res.json()),
     {

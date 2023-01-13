@@ -69,11 +69,13 @@ const getMinMax = (stayingFilterMs: number) => {
   }
 }
 
-// @ts-ignore
-export const Group = ({bindingRoutes, startFrom}) => {
-  // @ts-ignore
+interface IGroupComponent {
+  bindingRoutes: IBindingRoutes[];
+  startFrom: string;
+}
+
+export const Group: FC<IGroupComponent> = ({bindingRoutes, startFrom}) => {
   const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
-  // @ts-ignore
   const filterBySpendTime = appStore((state) => state.filterBySpendTime);
 
   const {minimumMs, maximumMs} = getMinMax(stayingFilterMs);

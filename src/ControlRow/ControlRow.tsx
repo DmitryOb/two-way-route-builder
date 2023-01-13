@@ -2,22 +2,21 @@ import React, {FC} from 'react';
 import moment from "moment/moment";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import {appStore, IMERITIN_RESORT, IRoute} from "../App";
+import {appStore, EnumGoesTo} from "../App";
 import "./ControlRow.css";
-import {IApiRoutes} from "../ClassicRoutesView/ClassicRoutesView";
 
 interface ControlRowProps {
 }
 
 const ControlRow: FC<ControlRowProps> = () => {
-  // @ts-ignore
   const date = appStore((state) => state.date);
-  // @ts-ignore
   const setDate = appStore((state) => state.setDate);
-  // @ts-ignore
   const setGoesTo = appStore((state) => state.setGoesTo);
 
+
   //TODO:
+  const filterByPossible = appStore((state) => state.filterByPossible);
+  const setPossible = appStore((state) => state.setPossible);
   const filterByPossibleFromNow = () => {
   //   const filteredRoutes: IApiRoutes = Object.assign(stateRoutes, {});
   //   for (const [key, routes] of Object.entries(filteredRoutes)) {
@@ -55,7 +54,7 @@ const ControlRow: FC<ControlRowProps> = () => {
         </button>
       </div>
       <div className={'control-column-second'}>
-        <button onClick={() => setGoesTo(IMERITIN_RESORT)}>
+        <button onClick={() => setGoesTo(EnumGoesTo.IMERITIN_RESORT)}>
           Хочу на курорт!
         </button>
         <button onClick={filterByPossibleFromNow}>
