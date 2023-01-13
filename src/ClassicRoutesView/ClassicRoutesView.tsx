@@ -30,6 +30,9 @@ interface ClassicRoutesViewProps {
 const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
   const routes: IApiRoutes = appStore((state) => state.stateRoutes);
 
+  //TODO: если фильтра активен красим в серый те маршруты по которым уже не успеваем
+  const filterByPossible = appStore((state) => state.filterByPossible);
+
   return (
     <Accordion>
       <AccordionSummary

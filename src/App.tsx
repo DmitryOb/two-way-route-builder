@@ -24,7 +24,7 @@ export interface IAppState {
   setPossible: (boolValue: boolean) => void;
   filterBySpendTime: boolean;
   setSpendTime: (boolValue: boolean) => void;
-  date: string;
+  date: string; // 'YYYY-MM-DD'
   setDate: (yyyyMmDd: string) => void;
   goesTo: EnumGoesTo;
   setGoesTo: (point: EnumGoesTo) => void;
@@ -122,10 +122,12 @@ function App() {
       <ControlRow/>
 
       <DiscreteSliderLabel/>
+
       <br/>
       {isLoading && <div>загрузка...</div>}
       {error && <div>ошибка загрузки</div>}
-      {stateRoutes.straightRoutes && stateRoutes.reversedRoutes &&
+
+      {stateRoutes !== undefined && Object.keys(stateRoutes).length !== 0 &&
         <>
           <ClassicRoutesView/>
           <ResultRoutes/>

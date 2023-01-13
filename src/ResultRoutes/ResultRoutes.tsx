@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import {appStore, BindingRoute, IRoute} from "../App";
 import {dateFormat, getMsInCity} from "../date";
+import moment from "moment";
 
 const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
   const resultedGroups: IGroup[] = [];
@@ -37,18 +38,22 @@ export interface IBindingRoutes {
 }
 
 interface IGroup {
-  startFrom: any;
+  startFrom: string; // '2023-01-13T22:10:00+03:00'
   bindingRoutes: IBindingRoutes[]
 }
 
 const ResultRoutes: FC<ResultRoutesProps> = () => {
-  // @ts-ignore
   const routes = appStore((state) => state.stateRoutes);
   const resultedGroups: IGroup[] = getResultedGroups(routes.straightRoutes, routes.reversedRoutes);
 
+  const filterByPossibleIsActive = appStore((state) => state.filterByPossible);
+  const filteredResultedGroups = !filterByPossibleIsActive ?
+    resultedGroups :
+    resultedGroups.filter((group: IGroup) => moment().isBefore(group.startFrom));
+
   return (
     <div className={'result-routes'}>
-      {resultedGroups.map(group =>
+      {filteredResultedGroups.map(group =>
         <Group key={group.startFrom}
                bindingRoutes={group.bindingRoutes}
                startFrom={group.startFrom}

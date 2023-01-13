@@ -9,27 +9,10 @@ interface ControlRowProps {
 }
 
 const ControlRow: FC<ControlRowProps> = () => {
-  const date = appStore((state) => state.date);
+  const date = appStore((state) => state.date); // 'YYYY-MM-DD'
   const setDate = appStore((state) => state.setDate);
   const setGoesTo = appStore((state) => state.setGoesTo);
-
-
-  //TODO:
-  const filterByPossible = appStore((state) => state.filterByPossible);
   const setPossible = appStore((state) => state.setPossible);
-  const filterByPossibleFromNow = () => {
-  //   const filteredRoutes: IApiRoutes = Object.assign(stateRoutes, {});
-  //   for (const [key, routes] of Object.entries(filteredRoutes)) {
-  //     let curKey = key as 'straightRoutes' | 'reversedRoutes';
-  //     let currentRoutes: IRoute[] = routes;
-  //   }
-  //   setRoutesState(filteredRoutes);
-  }
-  // // @ts-ignore
-  // const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
-  // @ts-ignore
-  // const setRoutesState = appStore((state) => state.setRoutesState);
-
 
   // TODO: показать кнопку если после нажатия на неё дата станет = сегодня или больше чем сегодня
   const isShowBackButton = true;
@@ -57,7 +40,7 @@ const ControlRow: FC<ControlRowProps> = () => {
         <button onClick={() => setGoesTo(EnumGoesTo.IMERITIN_RESORT)}>
           Хочу на курорт!
         </button>
-        <button onClick={filterByPossibleFromNow}>
+        <button onClick={() => setPossible(true)}>
           Куда успеваю?
         </button>
       </div>
