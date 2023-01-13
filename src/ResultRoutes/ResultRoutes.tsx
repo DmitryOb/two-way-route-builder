@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import {appStore, BindingRoute, IRoute} from "../App";
-import { IApiRoutes } from '../ClassicRoutesView/ClassicRoutesView';
 import {dateFormat, getMsInCity} from "../date";
 
 const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) => {
@@ -75,18 +74,18 @@ export const Group = ({bindingRoutes, startFrom}) => {
   // @ts-ignore
   const stayingFilterMs = appStore((state) => state.staying) * 60 * 1000;
   // @ts-ignore
-  const filterIsActive = appStore((state) => state.filter);
+  const filterBySpendTime = appStore((state) => state.filterBySpendTime);
 
   const {minimumMs, maximumMs} = getMinMax(stayingFilterMs);
 
   const bindingRoutesFiltered = bindingRoutes.filter((bindingRoute: IBindingRoutes) => {
-    if (!filterIsActive) {
+    if (!filterBySpendTime) {
       return true
     }
-
     if (bindingRoute.msInCity < minimumMs || bindingRoute.msInCity > maximumMs) {
       return false;
     }
+
     return true
   })
 
