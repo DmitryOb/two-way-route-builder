@@ -31,11 +31,11 @@ export default function DiscreteSliderLabel() {
   // @ts-ignore
   const setStaying = appStore((state) => state.setStaying);
   // @ts-ignore
-  const setFilter = appStore((state) => state.setFilter);
+  const setSpendTime = appStore((state) => state.setSpendTime);
 
   const handleSliderChange = (event: any) => {
     setStaying(event.target.value);
-    setFilter(event.target.value !== 300)
+    setSpendTime(event.target.value !== 300)
   }
 
   return (

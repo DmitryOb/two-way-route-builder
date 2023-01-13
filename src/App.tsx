@@ -20,7 +20,7 @@ export const appStore = create((set) => ({
     (state: any) => ({...state, staying: minutes})
   ),
   filter: false,
-  setFilter: (boolValue: any) => set(
+  setSpendTime: (boolValue: any) => set(
     (state: any) => ({...state, filter: boolValue})
   ),
   date: moment().format('YYYY-MM-DD'),
