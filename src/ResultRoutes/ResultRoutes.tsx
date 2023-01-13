@@ -7,14 +7,14 @@ const getResultedGroups = (straightRoutes: IRoute[], reversedRoutes: IRoute[]) =
   const resultedGroups: IGroup[] = [];
   for (const straightRoute of straightRoutes) {
     const group = {
-      startFrom: straightRoute.departure,
+      startFrom: straightRoute.departureStationName,
       bindingRoutes: []
     };
     const possibleBackWayRoutes: IRoute[] = reversedRoutes.filter(
-      (reverseRoute: any) => new Date(reverseRoute.departure) > new Date(straightRoute.arrival)
+      (reverseRoute: any) => new Date(reverseRoute.departureStationName) > new Date(straightRoute.arrivalStationName)
     )
     for (const possibleBackWayRoute of possibleBackWayRoutes) {
-      const msInCity = getMsInCity(possibleBackWayRoute.departure, straightRoute.arrival);
+      const msInCity = getMsInCity(possibleBackWayRoute.departureStationName, straightRoute.arrivalStationName);
       // @ts-ignore
       group.bindingRoutes.push({
         straight: straightRoute,
@@ -105,7 +105,7 @@ export const Group = ({bindingRoutes, startFrom}) => {
       <div>
         {bindingRoutesFiltered.map((binRoute: IBindingRoutes) => (
           <BindingRoute
-            key={binRoute.straight.arrival + binRoute.reversed.arrival}
+            key={binRoute.straight.arrivalStationName + binRoute.reversed.arrivalStationName}
             reversed={binRoute.reversed}
             straight={binRoute.straight}
             msInCity={binRoute.msInCity}

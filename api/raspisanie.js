@@ -22,8 +22,8 @@ function getFormattedRoutesFromApi(data) {
     routes.push({
       from: segment.from.title,
       to: segment.to.title,
-      departure: segment.departure,
-      arrival: segment.arrival,
+      departure: segment.departureStationName,
+      arrival: segment.arrivalStationName,
     })
   }
 

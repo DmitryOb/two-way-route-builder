@@ -7,6 +7,7 @@ import create from "zustand";
 import ClassicRoutesView, {IApiRoutes} from "./ClassicRoutesView/ClassicRoutesView";
 import ResultRoutes from "./ResultRoutes/ResultRoutes";
 import ControlRow from "./ControlRow/ControlRow";
+import {SWRResponse} from "swr/_internal";
 
 const SOVHOZ = `s9613229`; // Sovhoz
 const SOCHI = `c239`; // Sochi
@@ -31,7 +32,7 @@ export const appStore = create((set) => ({
     (state: any) => ({...state, goesTo: point})
   ),
   stateRoutes: {} as IApiRoutes,
-  setRoutesState: (routes: string) => set(
+  setRoutesState: (routes: IApiRoutes) => set(
     (state: any) => ({...state, stateRoutes: routes})
   ),
 }))
@@ -40,8 +41,8 @@ export interface IRoute {
   from: string;
   to: string;
   // '2022-12-28T07:22:00+03:00'
-  departure: string; // убытие
-  arrival: string; // прибытие
+  departureStationName: string; // убытие
+  arrivalStationName: string; // прибытие
 }
 
 // @ts-ignore
@@ -50,11 +51,11 @@ export const BindingRoute = ({straight, reversed, msInCity}) => {
 
   return (
     <div style={{display: "flex", justifyContent: "space-between"}}>
-      <span>В Сочи: {dateFormat(straight.arrival)}</span>
+      <span>В Сочи: {dateFormat(straight.arrivalStationName)}</span>
       <span>
           Время в городе: {cityTimeString}
         </span>
-      <span>Дома: {dateFormat(reversed.arrival)}</span>
+      <span>Дома: {dateFormat(reversed.arrivalStationName)}</span>
     </div>
   )
 }
@@ -67,20 +68,19 @@ function App() {
   // @ts-ignore
   const setRoutesState = appStore((state) => state.setRoutesState);
   // @ts-ignore
-  const stateRoutes = appStore((state) => state.stateRoutes);
+  const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
 
-  const {data: routes, error, isLoading} = useSWR(
+  const {data: routes, error, isLoading}: SWRResponse<IApiRoutes> = useSWR(
     `api/raspisanie?date=${date}&from=${SOVHOZ}&to=${goesTo}`,
     // @ts-ignore
-    (...args: any[]) => fetch(...args).then(res => res.json()),
+    (...args: any[]) => fetch(...args).then((res) => res.json()),
     {fallbackData: {} as IApiRoutes}
   )
-
   useEffect(() => {
-    if (routes.straightRoutes && routes.reversedRoutes) {
-      const firstComing = routes.straightRoutes[0].arrival;
+    if (routes !== undefined && routes.straightRoutes && routes.reversedRoutes) {
+      const firstComing = routes.straightRoutes[0].arrivalStationName;
       routes.reversedRoutes = routes.reversedRoutes.filter(
-        (route: any) => new Date(route.departure) > new Date(firstComing)
+        (route: any) => new Date(route.departureStationName) > new Date(firstComing)
       );
       setRoutesState(routes);
     }

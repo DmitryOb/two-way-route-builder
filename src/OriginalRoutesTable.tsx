@@ -25,11 +25,11 @@ export const OriginalRoutesTable = ({routes, name = 'no-name'}) => {
         </thead>
         <tbody>
         {routes.map((route: any) => (
-          <tr key={route.from + route.to + route.departure + route.arrival}>
+          <tr key={route.from + route.to + route.departureStationName + route.arrivalStationName}>
             <td>{route.from}</td>
             <td>{route.to}</td>
-            <td>{dateFormat(route.departure)}</td>
-            <td>{dateFormat(route.arrival)}</td>
+            <td>{dateFormat(route.departureStationName)}</td>
+            <td>{dateFormat(route.arrivalStationName)}</td>
           </tr>
         ))}
         </tbody>
