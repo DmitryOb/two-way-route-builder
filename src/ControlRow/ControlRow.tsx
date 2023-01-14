@@ -4,6 +4,9 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {appStore, EnumGoesTo} from "../App";
 import "./ControlRow.css";
+import Switch from '@mui/material/Switch';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 interface ControlRowProps {
 }
@@ -13,9 +16,13 @@ const ControlRow: FC<ControlRowProps> = () => {
   const setDate = appStore((state) => state.setDate);
   const setGoesTo = appStore((state) => state.setGoesTo);
   const setPossible = appStore((state) => state.setPossible);
+  const filterByPossible = appStore((state) => state.filterByPossible);
 
   // TODO: показать кнопку если после нажатия на неё дата станет = сегодня или больше чем сегодня
   const isShowBackButton = true;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPossible(event.target.checked)
+  };
 
   return (
     <div className={'control-row'}>
@@ -40,9 +47,16 @@ const ControlRow: FC<ControlRowProps> = () => {
         <button onClick={() => setGoesTo(EnumGoesTo.IMERITIN_RESORT)}>
           Хочу на курорт!
         </button>
-        <button onClick={() => setPossible(true)}>
-          Куда успеваю?
-        </button>
+        <FormGroup>
+          <FormControlLabel control={
+            <Switch checked={filterByPossible}
+                    onChange={handleChange}
+                    inputProps={{ 'aria-label': 'controlled' }}
+            />
+          }
+                            label="Куда успеваю?"
+          />
+        </FormGroup>
       </div>
     </div>
   )
