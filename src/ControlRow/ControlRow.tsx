@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import moment from "moment/moment";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import {appStore, EnumGoesTo} from "../App";
+import {appStore, EnumPoints} from "../App";
 import "./ControlRow.css";
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -55,7 +55,7 @@ const ControlRow: FC<ControlRowProps> = () => {
         }>
           из лоо!
         </button>
-        <button onClick={() => setGoesTo(EnumGoesTo.IMERITIN_RESORT)}>
+        <button onClick={() => setGoesTo(EnumPoints.IMERITIN_RESORT)}>
           на курорт!
         </button>
           <FormControlLabel label="Куда успеваю?"

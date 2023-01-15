@@ -11,7 +11,7 @@ import {SWRResponse} from "swr/_internal";
 import {StoreApi} from "zustand/vanilla";
 import {UseBoundStore} from "zustand/react";
 
-export enum EnumGoesTo {
+export enum EnumPoints {
   SOVHOZ = `s9613229`,
   SOCHI = `c239`,
   IMERITIN_RESORT = `s9812789`,
@@ -26,8 +26,8 @@ export interface IAppState {
   setSpendTime: (boolValue: boolean) => void;
   date: string; // 'YYYY-MM-DD'
   setDate: (yyyyMmDd: string) => void;
-  goesTo: EnumGoesTo;
-  setGoesTo: (point: EnumGoesTo) => void;
+  goesTo: EnumPoints;
+  setGoesTo: (point: EnumPoints) => void;
   stateRoutes: IApiRoutes;
   setRoutesState: (routes: IApiRoutes) => void;
 }
@@ -49,8 +49,8 @@ export const appStore: UseBoundStore<StoreApi<IAppState>> = create((set): IAppSt
   setDate: (yyyyMmDd: string) => set(
     (state: IAppState) => ({...state, date: yyyyMmDd})
   ),
-  goesTo: EnumGoesTo.SOCHI,
-  setGoesTo: (point: EnumGoesTo) => set(
+  goesTo: EnumPoints.SOCHI,
+  setGoesTo: (point: EnumPoints) => set(
     (state: IAppState) => ({...state, goesTo: point})
   ),
   stateRoutes: {} as IApiRoutes,
@@ -100,7 +100,7 @@ function App() {
   const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
 
   const {data: routes, error, isLoading}: SWRResponse<IApiRoutesBE> = useSWR(
-    `api/raspisanie?date=${date}&from=${EnumGoesTo.SOVHOZ}&to=${goesTo}`,
+    `api/raspisanie?date=${date}&from=${EnumPoints.SOVHOZ}&to=${goesTo}`,
     // @ts-ignore
     (...args: any[]) => fetch(...args).then((res) => res.json()),
     {
