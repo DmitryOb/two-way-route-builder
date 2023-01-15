@@ -28,6 +28,8 @@ export interface IAppState {
   setDate: (yyyyMmDd: string) => void;
   goesTo: EnumPoints;
   setGoesTo: (point: EnumPoints) => void;
+  goesFrom: EnumPoints;
+  setGoesFrom: (point: EnumPoints) => void;
   stateRoutes: IApiRoutes;
   setRoutesState: (routes: IApiRoutes) => void;
 }
@@ -52,6 +54,10 @@ export const appStore: UseBoundStore<StoreApi<IAppState>> = create((set): IAppSt
   goesTo: EnumPoints.SOCHI,
   setGoesTo: (point: EnumPoints) => set(
     (state: IAppState) => ({...state, goesTo: point})
+  ),
+  goesFrom: EnumPoints.SOVHOZ,
+  setGoesFrom: (point: EnumPoints) => set(
+    (state: IAppState) => ({...state, goesFrom: point})
   ),
   stateRoutes: {} as IApiRoutes,
   setRoutesState: (routes: IApiRoutes) => set(
@@ -96,11 +102,12 @@ const fromBeToFEMapFunc = (route: IRouteBE): IRoute => ({
 function App() {
   const date = appStore((state) => state.date);
   const goesTo = appStore((state) => state.goesTo);
+  const goesFrom = appStore((state) => state.goesFrom);
   const setRoutesState = appStore((state) => state.setRoutesState);
   const stateRoutes: IApiRoutes = appStore((state) => state.stateRoutes);
 
   const {data: routes, error, isLoading}: SWRResponse<IApiRoutesBE> = useSWR(
-    `api/raspisanie?date=${date}&from=${EnumPoints.SOVHOZ}&to=${goesTo}`,
+    `api/raspisanie?date=${date}&from=${goesFrom}&to=${goesTo}`,
     // @ts-ignore
     (...args: any[]) => fetch(...args).then((res) => res.json()),
     {
