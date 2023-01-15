@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {FC, useEffect} from 'react';
 import moment from 'moment';
 import {convertMsToHM, dateFormat} from "./date";
 import useSWR from 'swr'
@@ -66,8 +66,13 @@ export interface IRoute {
   arrivalTimeString: string; // время прибытия '2022-12-28T07:22:00+03:00'
 }
 
-// @ts-ignore
-export const BindingRoute = ({straight, reversed, msInCity}) => {
+interface IBindingRoute {
+  straight: IRoute;
+  reversed: IRoute;
+  msInCity: number;
+}
+
+export const BindingRoute: FC<IBindingRoute> = ({straight, reversed, msInCity}) => {
   const cityTimeString = convertMsToHM(msInCity);
 
   return (

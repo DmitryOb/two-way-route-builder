@@ -17,12 +17,9 @@
   padding: 2px;
 }
 
-/*.control-row > * {*/
-/*}*/
-
 .control-column-second {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
 }
