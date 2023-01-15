@@ -18,8 +18,11 @@ const ControlRow: FC<ControlRowProps> = () => {
   const setPossible = appStore((state) => state.setPossible);
   const filterByPossible = appStore((state) => state.filterByPossible);
 
-  // TODO: показать кнопку если после нажатия на неё дата станет = сегодня или больше чем сегодня
-  const isShowBackButton = true;
+  const isShowBackButton = () => {
+    const todayYyyMmmDdString = moment().format('YYYY-MM-DD');
+    return moment(date).subtract(1, 'd') >= moment(todayYyyMmmDdString);
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPossible(event.target.checked)
   };
@@ -27,8 +30,11 @@ const ControlRow: FC<ControlRowProps> = () => {
   return (
     <div className={'control-row'}>
       <div className={'control-column-first'}>
-        {isShowBackButton &&
-          <button onClick={() => setDate(moment(date).subtract(1, 'd').format('YYYY-MM-DD'))}>
+        {isShowBackButton() &&
+          <button onClick={() => {
+            const dayBefore = moment(date).subtract(1, 'd').format('YYYY-MM-DD');
+            setDate(dayBefore);
+          }}>
             <ArrowBackIosNewIcon fontSize={"small"}/>
           </button>
         }
