@@ -14,6 +14,7 @@ const ControlRow: FC<ControlRowProps> = () => {
   const date = appStore((state) => state.date); // 'YYYY-MM-DD'
   const setDate = appStore((state) => state.setDate);
   const setGoesTo = appStore((state) => state.setGoesTo);
+  const setGoesFrom = appStore((state) => state.setGoesFrom);
   const setPossible = appStore((state) => state.setPossible);
   const filterByPossible = appStore((state) => state.filterByPossible);
 
@@ -49,10 +50,7 @@ const ControlRow: FC<ControlRowProps> = () => {
         </button>
       </div>
       <div className={'control-column-second'}>
-        <button onClick={() => {
-          //TODO:
-        }
-        }>
+        <button onClick={() => setGoesFrom(EnumPoints.LOO)}>
           из лоо!
         </button>
         <button onClick={() => setGoesTo(EnumPoints.IMERITIN_RESORT)}>
