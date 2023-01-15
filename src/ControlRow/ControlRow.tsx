@@ -5,7 +5,6 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {appStore, EnumGoesTo} from "../App";
 import "./ControlRow.css";
 import Switch from '@mui/material/Switch';
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 interface ControlRowProps {
@@ -50,19 +49,26 @@ const ControlRow: FC<ControlRowProps> = () => {
         </button>
       </div>
       <div className={'control-column-second'}>
-        <button onClick={() => setGoesTo(EnumGoesTo.IMERITIN_RESORT)}>
-          Хочу на курорт!
+        <button onClick={() => {
+          //TODO:
+        }
+        }>
+          из лоо!
         </button>
-        <FormGroup>
-          <FormControlLabel control={
-            <Switch checked={filterByPossible}
-                    onChange={handleChange}
-                    inputProps={{ 'aria-label': 'controlled' }}
-            />
-          }
-                            label="Куда успеваю?"
+        <button onClick={() => setGoesTo(EnumGoesTo.IMERITIN_RESORT)}>
+          на курорт!
+        </button>
+          <FormControlLabel label="Куда успеваю?"
+                            control={
+                              <Switch checked={filterByPossible}
+                                      onChange={handleChange}
+                                      inputProps={{'aria-label': 'controlled'}}
+                              />
+                            }
+                            labelPlacement="bottom"
+
+
           />
-        </FormGroup>
       </div>
     </div>
   )
