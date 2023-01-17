@@ -140,7 +140,7 @@ function App() {
       {isLoading && <div>загрузка...</div>}
       {error && <div>ошибка загрузки</div>}
 
-      {stateRoutes !== undefined && Object.keys(stateRoutes).length !== 0 &&
+      {stateRoutes !== undefined && Object.keys(stateRoutes).length !== 0 && !isLoading &&
         <>
           <ClassicRoutesView/>
           <ResultRoutes/>
