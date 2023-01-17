@@ -16,6 +16,7 @@ export enum EnumPoints {
   SOCHI = `c239`,
   IMERITIN_RESORT = `s9812789`,
   LOO = `c73078`,
+  YAKORNAYA_SCHEL = `s9613005`,
 }
 
 export interface IAppState {

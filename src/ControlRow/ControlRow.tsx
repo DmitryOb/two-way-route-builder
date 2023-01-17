@@ -75,6 +75,7 @@ const ControlRow: FC<ControlRowProps> = () => {
           >
             <MenuItem value={EnumPoints.SOVHOZ}>Совхоз</MenuItem>
             <MenuItem value={EnumPoints.LOO}>Лоо</MenuItem>
+            <MenuItem value={EnumPoints.YAKORNAYA_SCHEL}>Якорная</MenuItem>
           </Select>
         </FormControl>
       </div>
