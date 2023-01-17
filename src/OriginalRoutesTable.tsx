@@ -1,8 +1,8 @@
-import {dateFormat} from "./date";
 import React, {FC} from "react";
-import {IRoute} from "./App";
+import {appStore, IRoute} from "./App";
+import moment from "moment";
 
-enum EnumNameDictionary {
+export enum EnumNameDictionary {
   straightRoutes = 'Туда',
   reversedRoutes = 'Обратно',
 }
@@ -14,15 +14,19 @@ const nameDictionary: Record<string, EnumNameDictionary> = {
 
 interface ClassicRoutesViewProps {
   routes: IRoute[];
-  name: string;
+  name: EnumNameDictionary;
 }
 
 export const OriginalRoutesTable: FC<ClassicRoutesViewProps> = ({routes, name}) => {
   const tableName = nameDictionary[name];
 
+  const isTooLateForRoute = (route: IRoute): boolean => {
+    return appStore((state) => state.filterByPossible) && moment().isAfter(route.departureTimeString);
+  }
+
   return (
     <div className={'original-routes-table-wrapper'}>
-      {tableName && <div>{tableName}</div>}
+      <div>{tableName}</div>
       <table id={name} className={'original-routes-table'}>
         <thead>
         <tr>
@@ -33,12 +37,18 @@ export const OriginalRoutesTable: FC<ClassicRoutesViewProps> = ({routes, name}) 
         </tr>
         </thead>
         <tbody>
-        {routes.map((route: any) => (
-          <tr key={route.from + route.to + route.departureTimeString + route.arrivalTimeString}>
+        {routes.map((route: IRoute) => (
+          <tr style={{opacity: isTooLateForRoute(route) ? '15%' : '100%'}}
+              key={route.from + route.to + route.departureTimeString + route.arrivalTimeString}
+          >
             <td>{route.from}</td>
             <td>{route.to}</td>
-            <td>{dateFormat(route.departureTimeString)}</td>
-            <td>{dateFormat(route.arrivalTimeString)}</td>
+            <td>
+              {moment(route.departureTimeString).format('HH:mm')}
+            </td>
+            <td>
+              {moment(route.arrivalTimeString).format('HH:mm')}
+            </td>
           </tr>
         ))}
         </tbody>

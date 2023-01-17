@@ -4,7 +4,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import {OriginalRoutesTable} from "../OriginalRoutesTable";
+import {EnumNameDictionary, OriginalRoutesTable} from "../OriginalRoutesTable";
 import {appStore, IRoute} from '../App';
 
 export interface IApiRoutes {
@@ -30,9 +30,6 @@ interface ClassicRoutesViewProps {
 const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
   const routes: IApiRoutes = appStore((state) => state.stateRoutes);
 
-  //TODO: если фильтра активен красим в серый те маршруты по которым уже не успеваем
-  const filterByPossible = appStore((state) => state.filterByPossible);
-
   return (
     <Accordion>
       <AccordionSummary
@@ -43,8 +40,8 @@ const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
         <Typography>туда-обратно</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <OriginalRoutesTable routes={routes.straightRoutes} name={'straightRoutes'}/>
-        <OriginalRoutesTable routes={routes.reversedRoutes} name={'reversedRoutes'}/>
+        <OriginalRoutesTable routes={routes.straightRoutes} name={EnumNameDictionary.straightRoutes}/>
+        {/*<OriginalRoutesTable routes={routes.reversedRoutes} name={EnumNameDictionary.reversedRoutes}/>*/}
       </AccordionDetails>
     </Accordion>
   )

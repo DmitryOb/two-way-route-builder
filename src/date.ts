@@ -1,3 +1,5 @@
+import moment from "moment/moment";
+
 function padTo2Digits(num: number) {
   return num.toString().padStart(2, '0');
 }
@@ -15,8 +17,7 @@ export function convertMsToHM(milliseconds: number) {
 }
 
 export const dateFormat = (date: string) => {
-  const toLoc = new Date(date).toLocaleTimeString();
-  return toLoc.substring(0, toLoc.length - 3);
+  return moment(date).format('HH:mm')
 }
 
 export const getMsInCity = (departure: string, arrival: string) => {
