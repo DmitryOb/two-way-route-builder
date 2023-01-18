@@ -2,6 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import {appStore, IAppState} from "./App";
+import {RANGE_MINUTE} from "./ResultRoutes/ResultRoutes";
 
 const marks = [
   {
@@ -51,7 +52,7 @@ export default function DiscreteSliderLabel() {
         />
       </Box>
       <span>&#8593;</span>
-      <span>Сколько времени займут дела?</span>
+      <span>Сколько времени займут дела? (+/- {RANGE_MINUTE}мин)</span>
     </div>
   );
 }

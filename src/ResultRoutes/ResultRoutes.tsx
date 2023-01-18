@@ -65,12 +65,14 @@ const ResultRoutes: FC<ResultRoutesProps> = () => {
 
 export default ResultRoutes;
 
+export const RANGE_MINUTE = 30;
+
 const getMinMax = (stayingFilterMs: number) => {
-  const thirtyMinutesInMs = 30 * 60 * 1000;
+  const rangeMinutesInMs = RANGE_MINUTE * 60 * 1000;
 
   return {
-    minimumMs: stayingFilterMs - thirtyMinutesInMs,
-    maximumMs: stayingFilterMs + thirtyMinutesInMs,
+    minimumMs: stayingFilterMs - rangeMinutesInMs,
+    maximumMs: stayingFilterMs + rangeMinutesInMs,
   }
 }
 
