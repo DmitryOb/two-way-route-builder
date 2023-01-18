@@ -25,7 +25,6 @@ export const OriginalRoutesTable: FC<ClassicRoutesViewProps> = ({routes, name}) 
     return filterByPossible && moment().isAfter(route.departureTimeString);
   }
 
-
   return (
     <div className={'original-routes-table-wrapper'}>
       <div>{tableName}</div>
