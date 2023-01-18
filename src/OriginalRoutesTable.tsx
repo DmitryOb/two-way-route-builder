@@ -20,8 +20,9 @@ interface ClassicRoutesViewProps {
 export const OriginalRoutesTable: FC<ClassicRoutesViewProps> = ({routes, name}) => {
   const tableName = nameDictionary[name];
 
+  const filterByPossible = appStore((state) => state.filterByPossible);
   const isTooLateForRoute = (route: IRoute): boolean => {
-    return appStore((state) => state.filterByPossible) && moment().isAfter(route.departureTimeString);
+    return filterByPossible && moment().isAfter(route.departureTimeString);
   }
 
   return (
