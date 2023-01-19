@@ -17,6 +17,7 @@ export enum EnumPoints {
   IMERITIN_RESORT = `s9812789`,
   LOO = `c73078`,
   YAKORNAYA_SCHEL = `s9613005`,
+  DAGOMIS = `c10992`,
 }
 
 export const PointsDictionary = new Map<EnumPoints, string>([
@@ -25,6 +26,7 @@ export const PointsDictionary = new Map<EnumPoints, string>([
   [EnumPoints.IMERITIN_RESORT, 'Имертинка'],
   [EnumPoints.LOO, 'Лоо'],
   [EnumPoints.YAKORNAYA_SCHEL, 'Якорная'],
+  [EnumPoints.DAGOMIS, 'Дагомыс']
 ])
 
 export interface IAppState {
