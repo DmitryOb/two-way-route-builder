@@ -14,9 +14,10 @@ interface ControlRowProps {
 const ControlRow: FC<ControlRowProps> = () => {
   const date = appStore((state) => state.date); // 'YYYY-MM-DD'
   const setDate = appStore((state) => state.setDate);
-  const setGoesTo = appStore((state) => state.setGoesTo);
   const goesFrom = appStore((state) => state.goesFrom);
   const setGoesFrom = appStore((state) => state.setGoesFrom);
+  const goesTo = appStore((state) => state.goesTo);
+  const setGoesTo = appStore((state) => state.setGoesTo);
   const setPossible = appStore((state) => state.setPossible);
   const filterByPossible = appStore((state) => state.filterByPossible);
 
@@ -64,10 +65,10 @@ const ControlRow: FC<ControlRowProps> = () => {
           </button>
         </div>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label" style={{background: 'white'}}>Откуда</InputLabel>
+          <InputLabel id="goes-from-select-label" style={{background: 'white'}}>Откуда</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="goes-from-select-label"
+            id="goes-from-select"
             value={goesFrom}
             label="Age"
             onChange={(event: SelectChangeEvent) => setGoesFrom(event.target.value as EnumPoints)}
@@ -81,20 +82,32 @@ const ControlRow: FC<ControlRowProps> = () => {
       </div>
 
       <div className={'control-column-second'}>
-        <button onClick={() => setGoesTo(EnumPoints.IMERITIN_RESORT)}>
-          на курорт!
-        </button>
-          <FormControlLabel label="Куда успеваю?"
-                            control={
-                              <Switch checked={filterByPossible}
-                                      onChange={handleChange}
-                                      inputProps={{'aria-label': 'controlled'}}
-                              />
-                            }
-                            labelPlacement="bottom"
+        <FormControlLabel label="Куда успеваю?"
+                          control={
+                            <Switch checked={filterByPossible}
+                                    onChange={handleChange}
+                                    inputProps={{'aria-label': 'controlled'}}
+                            />
+                          }
+                          labelPlacement="bottom"
 
 
-          />
+        />
+        <FormControl fullWidth>
+          <InputLabel id="goes-to-select-label" style={{background: 'white'}}>Куда</InputLabel>
+          <Select
+            labelId="goes-to-select-label"
+            id="goes-to-select"
+            value={goesTo}
+            label="Age"
+            onChange={(event: SelectChangeEvent) => setGoesTo(event.target.value as EnumPoints)}
+            autoWidth
+          >
+            <MenuItem value={EnumPoints.SOCHI}>Сочи</MenuItem>
+            <MenuItem value={EnumPoints.LOO}>Лоо</MenuItem>
+            <MenuItem value={EnumPoints.IMERITIN_RESORT}>Имертинка</MenuItem>
+          </Select>
+        </FormControl>
       </div>
     </div>
   )

@@ -85,9 +85,9 @@ export const BindingRoute: FC<IBindingRoute> = ({straight, reversed, msInCity}) 
 
   return (
     <div style={{display: "flex", justifyContent: "space-between"}}>
-      <span>В Сочи: {dateFormat(straight.arrivalTimeString)}</span>
+      <span>В точку: {dateFormat(straight.arrivalTimeString)}</span>
       <span>
-          Время в городе: {cityTimeString}
+          Время на точке: {cityTimeString}
         </span>
       <span>Дома: {dateFormat(reversed.arrivalTimeString)}</span>
     </div>

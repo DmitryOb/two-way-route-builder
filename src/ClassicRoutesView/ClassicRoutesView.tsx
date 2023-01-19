@@ -41,7 +41,7 @@ const ClassicRoutesView: FC<ClassicRoutesViewProps> = () => {
       </AccordionSummary>
       <AccordionDetails>
         <OriginalRoutesTable routes={routes.straightRoutes} name={EnumNameDictionary.straightRoutes}/>
-        {/*<OriginalRoutesTable routes={routes.reversedRoutes} name={EnumNameDictionary.reversedRoutes}/>*/}
+        <OriginalRoutesTable routes={routes.reversedRoutes} name={EnumNameDictionary.reversedRoutes}/>
       </AccordionDetails>
     </Accordion>
   )
