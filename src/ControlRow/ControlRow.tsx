@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import moment from "moment/moment";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import {appStore, EnumPoints} from "../App";
+import {appStore, EnumPoints, PointsDictionary} from "../App";
 import "./ControlRow.css";
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -74,9 +74,11 @@ const ControlRow: FC<ControlRowProps> = () => {
             onChange={(event: SelectChangeEvent) => setGoesFrom(event.target.value as EnumPoints)}
             autoWidth
           >
-            <MenuItem value={EnumPoints.SOVHOZ}>Совхоз</MenuItem>
-            <MenuItem value={EnumPoints.LOO}>Лоо</MenuItem>
-            <MenuItem value={EnumPoints.YAKORNAYA_SCHEL}>Якорная</MenuItem>
+            {Object.values(EnumPoints)
+              .map((enumPoint: EnumPoints) =>
+                <MenuItem value={enumPoint} key={enumPoint}>{PointsDictionary.get(enumPoint)}</MenuItem>
+              )
+            }
           </Select>
         </FormControl>
       </div>
@@ -103,9 +105,11 @@ const ControlRow: FC<ControlRowProps> = () => {
             onChange={(event: SelectChangeEvent) => setGoesTo(event.target.value as EnumPoints)}
             autoWidth
           >
-            <MenuItem value={EnumPoints.SOCHI}>Сочи</MenuItem>
-            <MenuItem value={EnumPoints.LOO}>Лоо</MenuItem>
-            <MenuItem value={EnumPoints.IMERITIN_RESORT}>Имертинка</MenuItem>
+            {Object.values(EnumPoints)
+              .map((enumPoint: EnumPoints) =>
+                <MenuItem value={enumPoint} key={enumPoint}>{PointsDictionary.get(enumPoint)}</MenuItem>
+              )
+            }
           </Select>
         </FormControl>
       </div>

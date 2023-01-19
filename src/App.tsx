@@ -19,6 +19,14 @@ export enum EnumPoints {
   YAKORNAYA_SCHEL = `s9613005`,
 }
 
+export const PointsDictionary = new Map<EnumPoints, string>([
+  [EnumPoints.SOVHOZ, 'Совхоз'],
+  [EnumPoints.SOCHI, 'Сочи'],
+  [EnumPoints.IMERITIN_RESORT, 'Имертинка'],
+  [EnumPoints.LOO, 'Лоо'],
+  [EnumPoints.YAKORNAYA_SCHEL, 'Якорная'],
+])
+
 export interface IAppState {
   staying: number;
   setStaying: (staying: number) => void;
