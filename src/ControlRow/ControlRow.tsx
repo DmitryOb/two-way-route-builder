@@ -75,6 +75,7 @@ const ControlRow: FC<ControlRowProps> = () => {
             autoWidth
           >
             {Object.values(EnumPoints)
+              .filter((enumPoint: EnumPoints) => enumPoint !== goesTo)
               .map((enumPoint: EnumPoints) =>
                 <MenuItem value={enumPoint} key={enumPoint}>{PointsDictionary.get(enumPoint)}</MenuItem>
               )
@@ -106,6 +107,7 @@ const ControlRow: FC<ControlRowProps> = () => {
             autoWidth
           >
             {Object.values(EnumPoints)
+              .filter((enumPoint: EnumPoints) => enumPoint !== goesFrom)
               .map((enumPoint: EnumPoints) =>
                 <MenuItem value={enumPoint} key={enumPoint}>{PointsDictionary.get(enumPoint)}</MenuItem>
               )
