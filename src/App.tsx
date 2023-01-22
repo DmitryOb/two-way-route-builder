@@ -90,19 +90,6 @@ interface IBindingRoute {
   msInCity: number;
 }
 
-export const BindingRoute: FC<IBindingRoute> = ({straight, reversed, msInCity}) => {
-  const cityTimeString = convertMsToHM(msInCity);
-
-  return (
-    <div style={{display: "flex", justifyContent: "space-between"}}>
-      <span>В точку: {dateFormat(straight.arrivalTimeString)}</span>
-      <span>
-          Время на точке: {cityTimeString}
-        </span>
-      <span>Дома: {dateFormat(reversed.arrivalTimeString)}</span>
-    </div>
-  )
-}
 
 const fromBeToFEMapFunc = (route: IRouteBE): IRoute => ({
   arrivalTimeString: route.arrival,
@@ -157,6 +144,21 @@ function App() {
           <ResultRoutes/>
         </>
       }
+    </div>
+  )
+}
+
+
+export const BindingRoute: FC<IBindingRoute> = ({straight, reversed, msInCity}) => {
+  const cityTimeString = convertMsToHM(msInCity);
+
+  return (
+    <div style={{display: "flex", justifyContent: "space-between"}}>
+      <span>В точку: {dateFormat(straight.arrivalTimeString)}</span>
+      <span>
+          Время на точке: {cityTimeString}
+        </span>
+      <span>Дома: {dateFormat(reversed.arrivalTimeString)}</span>
     </div>
   )
 }

@@ -14,10 +14,13 @@ interface ControlRowProps {
 const ControlRow: FC<ControlRowProps> = () => {
   const date = appStore((state) => state.date); // 'YYYY-MM-DD'
   const setDate = appStore((state) => state.setDate);
+
   const goesFrom = appStore((state) => state.goesFrom);
   const setGoesFrom = appStore((state) => state.setGoesFrom);
+
   const goesTo = appStore((state) => state.goesTo);
   const setGoesTo = appStore((state) => state.setGoesTo);
+
   const setPossible = appStore((state) => state.setPossible);
   const filterByPossible = appStore((state) => state.filterByPossible);
 
@@ -39,6 +42,14 @@ const ControlRow: FC<ControlRowProps> = () => {
       default:
         return {name: 'None', visible: false}
     }
+  }
+
+  const revertHandler = () => {
+    const goesFromOriginal = goesFrom;
+    const goesToOriginal = goesTo;
+
+    setGoesFrom(goesToOriginal);
+    setGoesTo(goesFromOriginal)
   }
 
   return (
@@ -85,17 +96,21 @@ const ControlRow: FC<ControlRowProps> = () => {
       </div>
 
       <div className={'control-column-second'}>
-        <FormControlLabel label="Куда успеваю?"
-                          control={
-                            <Switch checked={filterByPossible}
-                                    onChange={handleChange}
-                                    inputProps={{'aria-label': 'controlled'}}
-                            />
-                          }
-                          labelPlacement="bottom"
+        <div>
+          <FormControlLabel label="Куда успеваю?"
+                            control={
+                              <Switch checked={filterByPossible}
+                                      onChange={handleChange}
+                                      inputProps={{'aria-label': 'controlled'}}
+                              />
+                            }
+                            labelPlacement="bottom"
 
 
-        />
+          />
+          {/* TODO: do markup more pretty */}
+          <button onClick={revertHandler}>revert</button>
+        </div>
         <FormControl fullWidth>
           <InputLabel id="goes-to-select-label" style={{background: 'white'}}>Куда</InputLabel>
           <Select
