@@ -7,6 +7,8 @@ import "./ControlRow.css";
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import IconButton from '@mui/material/IconButton';
 
 interface ControlRowProps {
 }
@@ -54,27 +56,27 @@ const ControlRow: FC<ControlRowProps> = () => {
 
   return (
     <div className={'control-row'}>
-      <div className={'control-column-first'}>
-        <div className={'date'}>
-          <button style={{visibility: isShowBackButton() ? 'visible' : 'hidden'}}
-                  onClick={() => {
-                    const dayBefore = moment(date).subtract(1, 'd').format('YYYY-MM-DD');
-                    setDate(dayBefore);
-                  }}
-          >
-            <ArrowBackIosNewIcon fontSize={"small"}/>
-          </button>
-          <div>
-            <span>{date}</span>
-            <br/>
-            <span style={{visibility: getDateDescription(date).visible ? 'visible' : 'hidden'}}>
+      <div className={'date'}>
+        <button style={{visibility: isShowBackButton() ? 'visible' : 'hidden'}}
+                onClick={() => {
+                  const dayBefore = moment(date).subtract(1, 'd').format('YYYY-MM-DD');
+                  setDate(dayBefore);
+                }}
+        >
+          <ArrowBackIosNewIcon fontSize={"small"}/>
+        </button>
+        <div>
+          <span>{date}</span>
+          <br/>
+          <span style={{visibility: getDateDescription(date).visible ? 'visible' : 'hidden'}}>
               {getDateDescription(date).name}
             </span>
-          </div>
-          <button onClick={() => setDate(moment(date).add(1, 'd').format('YYYY-MM-DD'))}>
-            <ArrowForwardIosIcon fontSize={"small"}/>
-          </button>
         </div>
+        <button onClick={() => setDate(moment(date).add(1, 'd').format('YYYY-MM-DD'))}>
+          <ArrowForwardIosIcon fontSize={"small"}/>
+        </button>
+      </div>
+      <div className={'goes'}>
         <FormControl fullWidth>
           <InputLabel id="goes-from-select-label" style={{background: 'white'}}>Откуда</InputLabel>
           <Select
@@ -93,24 +95,9 @@ const ControlRow: FC<ControlRowProps> = () => {
             }
           </Select>
         </FormControl>
-      </div>
-
-      <div className={'control-column-second'}>
-        <div>
-          <FormControlLabel label="Куда успеваю?"
-                            control={
-                              <Switch checked={filterByPossible}
-                                      onChange={handleChange}
-                                      inputProps={{'aria-label': 'controlled'}}
-                              />
-                            }
-                            labelPlacement="bottom"
-
-
-          />
-          {/* TODO: do markup more pretty */}
-          <button onClick={revertHandler}>revert</button>
-        </div>
+        <IconButton size={'small'} onClick={revertHandler}>
+          <AutorenewIcon fontSize={'small'}/>
+        </IconButton>
         <FormControl fullWidth>
           <InputLabel id="goes-to-select-label" style={{background: 'white'}}>Куда</InputLabel>
           <Select
@@ -130,6 +117,16 @@ const ControlRow: FC<ControlRowProps> = () => {
           </Select>
         </FormControl>
       </div>
+      <FormControlLabel
+        label="Куда успеваю?"
+        control={
+          <Switch checked={filterByPossible}
+                  onChange={handleChange}
+                  inputProps={{'aria-label': 'controlled'}}
+          />
+        }
+        labelPlacement="bottom"
+      />
     </div>
   )
 };

@@ -3,16 +3,20 @@
   box-shadow: 0 1px 4px #2f9b9b;
   border-radius: 10px;
   grid-auto-flow: column;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 5px;
+  align-items: center;
 }
 
-.control-column-first {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+@media (max-width: 767px) {
+  .control-row {
+    grid-auto-flow: row;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-.control-column-first .date {
+.date {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,13 +24,17 @@
   gap: 10px;
 }
 
-.control-column-first .date button {
+.date button {
   padding: 2px;
 }
-
-.control-column-second {
+.goes {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px;
+  align-items: center;
+  gap: 5px;
+}
+@media (max-width: 767px) {
+  .goes {
+    order: 1;
+    grid-column: span 2;
+  }
 }

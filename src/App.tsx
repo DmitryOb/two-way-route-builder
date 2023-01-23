@@ -130,8 +130,14 @@ function App() {
 
   return (
     <div className="App">
+      {/*
+      date "куда успеваю" "откуда" "куда" "revert"
+      */}
       <ControlRow/>
 
+      {/*
+      сколько времени займут дела
+      */}
       <DiscreteSliderLabel/>
 
       <br/>
