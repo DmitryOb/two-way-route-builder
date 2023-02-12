@@ -8,5 +8,11 @@ git clone https://github.com/DmitryOb/react-node-vite-vercel-rasp.git
 npm ci
 ```
 ```sh
+vercel env pull .env
+```
+``
+in .env file replace it: YA_API_KEY="your-yandex-api-key"
+``
+```sh
 vercel dev
 ```
