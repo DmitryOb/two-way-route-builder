@@ -2,7 +2,7 @@ import axios from 'axios';
 import url from 'url';
 
 function apiCallGetData(from, to, date) {
-  const apiKey = 'bcc1e3b5-de4b-436d-9b13-87afd816b370';
+  const apiKey = process.env.YA_API_KEY;
   const baseURL = 'https://api.rasp.yandex.net/v3.0/search/';
   const url = `${baseURL}?apikey=${apiKey}&format=json&from=${from}&to=${to}&lang=ru_RU&date=${date}&transport_types=suburban`;
 
