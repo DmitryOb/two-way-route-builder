@@ -15,3 +15,4 @@ in .env file replace it: YA_API_KEY="your-yandex-api-key"
 ```sh
 vercel dev
 ```
+vercel dashboard https://vercel.com/dmitryob/react-node-vite-vercel-rasp
